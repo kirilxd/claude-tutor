@@ -1,0 +1,7 @@
+{
+  "name": "claude-tutor-dashboard",
+  "private": true,
+  "dependencies": {
+    "express": "^4"
+  }
+}
