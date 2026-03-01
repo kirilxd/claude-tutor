@@ -1,0 +1,6 @@
+node_modules/
+.idea/
+.claude/
+.playwright-mcp/
+skills/dashboard/server/package-lock.json
+skills/dashboard/server/node_modules/

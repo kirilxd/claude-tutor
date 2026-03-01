@@ -1,0 +1,59 @@
+{
+  "skill_name": "claude-tutor",
+  "trigger_evals": [
+    {"id": 1, "prompt": "I want to learn kubernetes", "should_trigger": "learn"},
+    {"id": 2, "prompt": "teach me about investing", "should_trigger": "learn"},
+    {"id": 3, "prompt": "where do I start with machine learning", "should_trigger": "learn"},
+    {"id": 4, "prompt": "help me understand DNS", "should_trigger": "learn"},
+    {"id": 5, "prompt": "create a learning roadmap for Rust", "should_trigger": "learn"},
+    {"id": 6, "prompt": "quiz me on DNS", "should_trigger": "quiz"},
+    {"id": 7, "prompt": "test my knowledge of TCP", "should_trigger": "quiz"},
+    {"id": 8, "prompt": "how well do I know python", "should_trigger": "review"},
+    {"id": 9, "prompt": "practice questions on kubernetes", "should_trigger": "quiz"},
+    {"id": 10, "prompt": "check my understanding of networking", "should_trigger": "quiz"},
+    {"id": 11, "prompt": "how am I doing", "should_trigger": "review"},
+    {"id": 12, "prompt": "show my progress", "should_trigger": "review"},
+    {"id": 13, "prompt": "what should I study next", "should_trigger": "review"},
+    {"id": 14, "prompt": "what are my weak areas", "should_trigger": "review"},
+    {"id": 15, "prompt": "find me resources on python", "should_trigger": "resources"},
+    {"id": 16, "prompt": "best tutorials for kubernetes", "should_trigger": "resources"},
+    {"id": 17, "prompt": "recommend a book on system design", "should_trigger": "resources"}
+  ],
+  "functional_evals": [
+    {
+      "id": 1,
+      "prompt": "/learn DNS",
+      "setup_prompt": "I'm a beginner. My goal is understanding DNS resolution. Working knowledge depth. A weekend. I prefer hands-on projects. The plan looks good, save it.",
+      "expectations": [
+        "Plan file created in ~/.claude/learning/plans/ (not progress/)",
+        "index.json created or updated in ~/.claude/learning/",
+        "Plan JSON contains 'modules' array with keyConcepts and resources",
+        "No quiz fields (quizzes, weakAreas, spacedRepetition) in plan file",
+        "profile.json created in ~/.claude/learning/"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/quiz dns",
+      "depends_on": 1,
+      "setup_prompt": "Answer: A, A, A, A, A",
+      "expectations": [
+        "Progress file created at ~/.claude/learning/progress/dns.json",
+        "Progress JSON contains 'quizzes' array with score and questions",
+        "Progress JSON contains 'spacedRepetition' with nextReview dates",
+        "No quiz fields leaked into plans/ directory",
+        "index.json updated with quizzesTaken > 0"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/review",
+      "depends_on": 2,
+      "expectations": [
+        "Output mentions DNS topic",
+        "Output contains score or percentage",
+        "Output contains a recommendation or next step"
+      ]
+    }
+  ]
+}

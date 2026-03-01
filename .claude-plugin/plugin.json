@@ -1,0 +1,33 @@
+{
+  "name": "claude-tutor",
+  "version": "1.0.0",
+  "description": "Interactive learning companion — creates personalized learning plans, quizzes with adaptive difficulty, and tracks progress across sessions",
+  "author": {
+    "name": "kirilxd"
+  },
+  "license": "MIT",
+  "keywords": ["learning", "education", "quiz", "study", "tutor"],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/enforce-paths.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js"
+          }
+        ]
+      }
+    ]
+  }
+}
