@@ -6,14 +6,14 @@ try {
   const content = input.tool_input?.content || input.tool_input?.new_string || '';
 
   // Block writes to relative learning/ paths (project directory instead of ~/.claude/learning/)
-  // Matches: learning/plans/..., learning/progress/..., ./learning/plans/..., or
+  // Matches: learning/plans/..., learning/progress/..., learning/lessons/..., ./learning/plans/..., or
   // absolute project paths like /Users/.../project/learning/plans/...
-  const hasLearningSubdir = filePath.includes('/learning/plans/') || filePath.includes('/learning/progress/') ||
-    filePath.startsWith('learning/plans/') || filePath.startsWith('learning/progress/');
+  const hasLearningSubdir = filePath.includes('/learning/plans/') || filePath.includes('/learning/progress/') || filePath.includes('/learning/lessons/') ||
+    filePath.startsWith('learning/plans/') || filePath.startsWith('learning/progress/') || filePath.startsWith('learning/lessons/');
   if (hasLearningSubdir && !filePath.includes('/.claude/learning/')) {
     process.stderr.write(
       `BLOCKED: Learning data must be saved to ~/.claude/learning/, not the project directory. ` +
-      `Use the absolute path ~/.claude/learning/plans/ or ~/.claude/learning/progress/.`
+      `Use the absolute path ~/.claude/learning/plans/, ~/.claude/learning/progress/, or ~/.claude/learning/lessons/.`
     );
     process.exit(2);
   }
@@ -87,6 +87,25 @@ try {
           `BLOCKED: Plan file contains unknown fields: ${unknownKeys.join(', ')}. ` +
           `Allowed fields are: ${allowedPlanFields.join(', ')}. ` +
           `Quiz data (quizzes, weakAreas, etc) belongs in progress/, not plans/.`
+        );
+        process.exit(2);
+      }
+    } catch (e) {
+      // Not valid JSON yet (partial edit) — allow it
+    }
+  }
+
+  // Validate schema: lesson cache files must use correct field names
+  if (filePath.includes('/learning/lessons/') && content.trim().startsWith('{')) {
+    const allowedLessonFields = ['slug', 'moduleId', 'topic', 'moduleTitle', 'generated', 'events'];
+    try {
+      const parsed = JSON.parse(content);
+      const topKeys = Object.keys(parsed);
+      const unknownKeys = topKeys.filter(k => !allowedLessonFields.includes(k));
+      if (unknownKeys.length > 0) {
+        process.stderr.write(
+          `BLOCKED: Lesson cache file contains unknown fields: ${unknownKeys.join(', ')}. ` +
+          `Allowed fields are: ${allowedLessonFields.join(', ')}.`
         );
         process.exit(2);
       }

@@ -983,7 +983,7 @@ async function renderDiagnostic(slug) {
 
 // --- Teach View ---
 
-async function renderTeach(slug, moduleId) {
+async function renderTeach(slug, moduleId, regenerate = false) {
   app.innerHTML = `<h1>Loading module...</h1>`;
 
   try {
@@ -992,19 +992,39 @@ async function renderTeach(slug, moduleId) {
     if (!mod) { app.innerHTML = '<div class="alert alert-error">Module not found</div>'; return; }
 
     app.innerHTML = `<div style="max-width:760px">
-      <div class="flex gap-8 mb-8"><a href="#/plans/${slug}" class="text-sm">← Back to plan</a></div>
+      <div class="flex gap-8 mb-8">
+        <a href="#/plans/${slug}" class="text-sm">← Back to plan</a>
+        <a href="#" id="teach-regenerate" class="text-sm text-muted">Regenerate lesson</a>
+      </div>
       <h1>Module ${mod.id}: ${mod.title}</h1>
       <div class="text-muted mb-8">${mod.estimatedTime || ''} · ${(mod.keyConcepts || []).join(', ')}</div>
       <div id="teach-content" class="section"></div>
-      <div id="teach-status" class="card"><div class="text-secondary">Claude is preparing the lesson...</div>
+      <div id="teach-status" class="card"><div id="teach-status-text" class="text-secondary">Claude is preparing the lesson...</div>
         <div class="progress-bar mt-16"><div class="fill" style="width:15%"></div></div></div>
     </div>`;
 
+    document.getElementById('teach-regenerate').addEventListener('click', (e) => {
+      e.preventDefault();
+      renderTeach(slug, moduleId, true);
+    });
+
     const content = document.getElementById('teach-content');
     const status = document.getElementById('teach-status');
+    const loadingInterval = startLoadingRotation('teach-status-text');
 
-    await connectSSE(`/api/teach/module?slug=${slug}&moduleId=${moduleId}`, {
+    await connectSSE(`/api/teach/module?slug=${slug}&moduleId=${moduleId}${regenerate ? '&regenerate=true' : ''}`, {
+      cached: () => {
+        stopLoadingRotation(loadingInterval);
+        status.style.display = 'none';
+      },
+      status: (msg) => {
+        const statusText = document.getElementById('teach-status-text');
+        if (statusText) { statusText.dataset.done = '1'; statusText.textContent = msg; }
+        const fill = status.querySelector('.fill');
+        if (fill) fill.style.width = '50%';
+      },
       content: (text) => {
+        stopLoadingRotation(loadingInterval);
         status.style.display = 'none';
         const div = document.createElement('div');
         div.className = 'section';
@@ -1044,8 +1064,9 @@ async function renderTeach(slug, moduleId) {
           });
         });
       },
-      error: (msg) => { status.innerHTML = `<span style="color:var(--error)">${msg}</span>`; },
+      error: (msg) => { stopLoadingRotation(loadingInterval); status.innerHTML = `<span style="color:var(--error)">${msg}</span>`; },
     });
+    stopLoadingRotation(loadingInterval);
 
     // Done — add quiz prompt
     const doneDiv = document.createElement('div');

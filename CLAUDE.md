@@ -39,8 +39,11 @@ All user data lives in `~/.claude/learning/` (absolute path, never relative):
 | `~/.claude/learning/profile.json` | Learner preferences | `learningStyle`, `background`, `createdTopics` |
 | `~/.claude/learning/plans/<slug>-<date>.json` | Learning plans | `topic`, `slug`, `created`, `level`, `goal`, `depth`, `timeCommitment`, `modules`, `totalEstimatedTime`, `diagnostic` |
 | `~/.claude/learning/progress/<slug>.json` | Quiz progress | `topic`, `quizzes`, `weakAreas`, `strongAreas`, `overallScore`, `spacedRepetition` |
+| `~/.claude/learning/lessons/<slug>-<moduleId>.json` | Cached AI-generated lesson content | `slug`, `moduleId`, `topic`, `moduleTitle`, `generated`, `events` |
 
 **The critical rule:** Plan fields and progress fields must never cross directories. The hook blocks this, but skills must also get the paths right. `overallScore` is a percentage (0-100), not a fraction (0-1).
+
+Lesson files are a cache, not a source of truth — the dashboard's `/api/teach/module` route writes one after successfully generating a module's lesson, and serves it back on repeat visits instead of re-invoking Claude. `rm -rf ~/.claude/learning/lessons/` fully resets it; deleting one file forces that module to regenerate on next view.
 
 ## Command → Skill → Tool Chain
 

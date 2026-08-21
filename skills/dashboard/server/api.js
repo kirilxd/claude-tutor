@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { validatePlan, validateProgress, updateSM2, computeWeakStrong, getModuleScores, toSlug } = require('./validate');
+const { validatePlan, validateProgress, validateLesson, updateSM2, computeWeakStrong, getModuleScores, toSlug } = require('./validate');
 const { sendEvent, initSSE, streamClaude, extractJSON } = require('./sse');
 
 const router = express.Router();
@@ -41,6 +41,10 @@ function findPlanFile(slug) {
     .sort()
     .reverse();
   return files.length > 0 ? path.join(plansDir, files[0]) : null;
+}
+
+function lessonCachePath(slug, moduleId) {
+  return path.join(LEARNING_DIR, 'lessons', `${slug}-${moduleId}.json`);
 }
 
 // --- Stats ---
@@ -500,6 +504,7 @@ Output ONLY a JSON array:
 [{"question":"...", "format":"mcq", "options":["A","B","C","D"], "correct":0, "concept":"concept-name", "explanation":"..."}]`;
 
   streamClaude(res, prompt, {
+    onStatus: (msg, r) => sendEvent(r, 'status', msg),
     onComplete: (output, r) => {
       const questions = extractJSON(output);
       if (!Array.isArray(questions)) { sendEvent(r, 'error', 'Failed to generate diagnostic'); return; }
@@ -538,7 +543,7 @@ router.post('/diagnostic/submit', (req, res) => {
 // --- Teach: Module ---
 
 router.get('/teach/module', (req, res) => {
-  const { slug, moduleId } = req.query;
+  const { slug, moduleId, regenerate } = req.query;
   if (!slug || !moduleId) return res.status(400).json({ error: 'slug and moduleId required' });
 
   const planFile = findPlanFile(slug);
@@ -547,6 +552,18 @@ router.get('/teach/module', (req, res) => {
   const plan = readJson(planFile);
   const mod = plan.modules.find(m => String(m.id) === String(moduleId));
   if (!mod) return res.status(404).json({ error: 'Module not found' });
+
+  const cachePath = lessonCachePath(slug, moduleId);
+  const cached = regenerate === 'true' ? null : readJson(cachePath);
+
+  if (cached && Array.isArray(cached.events)) {
+    initSSE(res);
+    sendEvent(res, 'cached', { generated: cached.generated });
+    for (const ev of cached.events) sendEvent(res, ev.type, ev.data);
+    sendEvent(res, 'done', {});
+    res.end();
+    return;
+  }
 
   const profile = readJson(path.join(LEARNING_DIR, 'profile.json'));
   const style = profile?.learningStyle || 'hands-on';
@@ -569,22 +586,25 @@ COMPREHENSION_CHECK: {"question":"...", "format":"mcq", "options":["A","B","C","
 Write in a conversational, engaging tone. Use markdown formatting.`;
 
   streamClaude(res, prompt, {
+    onStatus: (msg, r) => sendEvent(r, 'status', msg),
     onComplete: (output, r) => {
       // Split output into content chunks and comprehension checks
       const lines = output.split('\n');
       let contentBuffer = '';
+      const capturedEvents = [];
+      const emit = (type, data) => { sendEvent(r, type, data); capturedEvents.push({ type, data }); };
 
       for (const line of lines) {
         if (line.startsWith('COMPREHENSION_CHECK:')) {
           // Flush content buffer
           if (contentBuffer.trim()) {
-            sendEvent(r, 'content', contentBuffer.trim());
+            emit('content', contentBuffer.trim());
             contentBuffer = '';
           }
           // Parse and send check
           try {
             const checkJson = JSON.parse(line.replace('COMPREHENSION_CHECK:', '').trim());
-            sendEvent(r, 'check', checkJson);
+            emit('check', checkJson);
           } catch (e) {
             contentBuffer += line + '\n';
           }
@@ -592,7 +612,16 @@ Write in a conversational, engaging tone. Use markdown formatting.`;
           contentBuffer += line + '\n';
         }
       }
-      if (contentBuffer.trim()) sendEvent(r, 'content', contentBuffer.trim());
+      if (contentBuffer.trim()) emit('content', contentBuffer.trim());
+
+      if (capturedEvents.length > 0) {
+        const lesson = {
+          slug, moduleId: String(moduleId), topic: plan.topic, moduleTitle: mod.title,
+          generated: new Date().toISOString(), events: capturedEvents,
+        };
+        const { valid } = validateLesson(lesson);
+        if (valid) writeJson(cachePath, lesson);
+      }
     },
   });
 });
@@ -614,6 +643,7 @@ Output ONLY a JSON array of resources:
 Include 5-10 resources. Mix of types. Note free vs paid. Use real URLs.`;
 
   streamClaude(res, prompt, {
+    onStatus: (msg, r) => sendEvent(r, 'status', msg),
     onComplete: (output, r) => {
       const resources = extractJSON(output);
       if (!Array.isArray(resources)) { sendEvent(r, 'error', 'Failed to find resources'); return; }

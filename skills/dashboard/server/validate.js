@@ -4,6 +4,7 @@ const PLAN_FIELDS = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'time
 const PROGRESS_FIELDS = ['topic', 'quizzes', 'weakAreas', 'strongAreas', 'overallScore', 'spacedRepetition'];
 const QUIZ_FIELDS = ['quizzes', 'weakAreas', 'strongAreas', 'spacedRepetition', 'overallScore'];
 const PLAN_ONLY_FIELDS = ['modules', 'resources', 'timeCommitment', 'totalEstimatedTime'];
+const LESSON_FIELDS = ['slug', 'moduleId', 'topic', 'moduleTitle', 'generated', 'events'];
 
 function validatePlan(data) {
   const errors = [];
@@ -42,6 +43,25 @@ function validateProgress(data) {
         errors.push(`spacedRepetition.${concept} must be an object with {easeFactor, intervalDays, nextReview, repetitions}`);
       }
     }
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+function validateLesson(data) {
+  const errors = [];
+  if (typeof data !== 'object' || data === null) {
+    return { valid: false, errors: ['Data must be a JSON object'] };
+  }
+  const keys = Object.keys(data);
+  const unknown = keys.filter(k => !LESSON_FIELDS.includes(k));
+  if (unknown.length > 0) {
+    errors.push(`Unknown fields in lesson: ${unknown.join(', ')}. Allowed: ${LESSON_FIELDS.join(', ')}`);
+  }
+  if (!Array.isArray(data.events)) {
+    errors.push('events must be an array');
+  } else {
+    const badEvent = data.events.find(e => !e || !['content', 'check'].includes(e.type));
+    if (badEvent) errors.push('events[].type must be "content" or "check"');
   }
   return { valid: errors.length === 0, errors };
 }
@@ -120,6 +140,6 @@ function toSlug(topic) {
 }
 
 module.exports = {
-  validatePlan, validateProgress, PLAN_FIELDS, PROGRESS_FIELDS,
+  validatePlan, validateProgress, validateLesson, PLAN_FIELDS, PROGRESS_FIELDS, LESSON_FIELDS,
   updateSM2, computeWeakStrong, getModuleScores, toSlug,
 };

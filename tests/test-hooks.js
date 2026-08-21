@@ -297,6 +297,43 @@ test('still allows correct ~/.claude/learning/plans/ path', () => {
   assert(r.exitCode === 0, `Expected exit 0, got ${r.exitCode}`);
 });
 
+// --- Blocking wrong field names / paths in lessons/ ---
+
+console.log('\nBlocking wrong field names / paths in lessons/:');
+
+test('blocks relative path learning/lessons/', () => {
+  const r = runHook({
+    file_path: 'learning/lessons/dns-1.json',
+    content: '{"slug": "dns", "moduleId": "1", "events": []}',
+  });
+  assert(r.exitCode === 2, `Expected exit 2, got ${r.exitCode}`);
+  assert(r.stderr.includes('~/.claude/learning/'), `Should suggest correct path`);
+});
+
+test('blocks unknown fields in lessons/', () => {
+  const r = runHook({
+    file_path: `${HOME}/.claude/learning/lessons/dns-1.json`,
+    content: '{"slug": "dns", "moduleId": "1", "events": [], "quizzes": []}',
+  });
+  assert(r.exitCode === 2, `Expected exit 2, got ${r.exitCode}`);
+});
+
+test('allows correct lesson schema', () => {
+  const r = runHook({
+    file_path: `${HOME}/.claude/learning/lessons/dns-1.json`,
+    content: '{"slug": "dns", "moduleId": "1", "topic": "DNS", "moduleTitle": "Intro", "generated": "2026-03-29T00:00:00.000Z", "events": []}',
+  });
+  assert(r.exitCode === 0, `Expected exit 0, got ${r.exitCode}`);
+});
+
+test('still allows correct ~/.claude/learning/lessons/ path', () => {
+  const r = runHook({
+    file_path: `${HOME}/.claude/learning/lessons/dns-1.json`,
+    content: '{"slug": "dns", "moduleId": "1", "events": []}',
+  });
+  assert(r.exitCode === 0, `Expected exit 0, got ${r.exitCode}`);
+});
+
 // --- Summary ---
 
 console.log(`\n${pass + fail} tests: ${pass} passed, ${fail} failed`);
