@@ -110,6 +110,7 @@ If any concepts have `nextReview` at or before today across any topic, show the 
 
 Always end with one clear, actionable suggestion:
 
+- If any concept is **stuck** (wrong in at least 2 of its last 3 attempts in `quizzes[].questions[]`): "You keep missing [concept] ([N] of the last 3 attempts) — re-learn it before the next review. Run `/learn [topic]` or ask me to teach [concept]." Put this first: more quizzing won't fix a concept that was never understood.
 - If concepts are due for review (nextReview <= today): "You have [N] concepts due for review in [topic]. Run `/quiz [topic]` to keep them fresh — spaced repetition works best when you review on schedule."
 - If a topic has weak areas: "Retake the quiz on [topic] focusing on [weak area]. Use `/quiz [topic]`"
 - If a module is unstarted: "Start Module [N]: [title]. Check `/resources [topic]` for study materials"

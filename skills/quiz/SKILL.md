@@ -58,6 +58,15 @@ You MUST read `~/.claude/learning/progress/[topic-slug].json` before generating 
 - Weight questions toward `weakAreas` from prior quizzes
 - If `spacedRepetition` data exists, check for concepts where `nextReview` is today or in the past. These are overdue for review — tell the user "You have N concepts due for review" and include them in the quiz
 
+**Re-teach before re-testing (stuck concepts):**
+
+A concept is **stuck** when it was answered wrong in at least 2 of its last 3 attempts (count every entry in `quizzes[].questions[]` with that `concept`, newest first). Re-quizzing a stuck concept on schedule just repeats the miss — the user needs teaching, not another question.
+
+- Before asking about a stuck concept, tell the user: "You've missed [concept] in [N] of your last 3 attempts — let's re-learn it before I test it again."
+- Re-teach it briefly: the core idea, *why* it works that way, and one worked example. Use a **different angle or example** than the one the user keeps getting wrong, and name the specific mistake from earlier attempts (e.g. the wrong answer they keep giving).
+- Then ask **one fresh question** in a new scenario. Do not ask the same question you just explained.
+- Grade and schedule that answer as usual. Never skip teaching a stuck concept just because it's due.
+
 ### Step 3: Generate Questions
 
 Generate a set of questions (default: 5, user can request more/fewer).
@@ -98,6 +107,8 @@ If correct:
 
 If incorrect:
 > Not quite. The answer is [correct answer]. [2-3 sentence explanation helping the user understand]
+
+If this miss makes the concept **stuck** (see Step 2), don't move on with just the correction — re-teach it now (core idea, why, worked example from a new angle), then continue.
 
 For short answers, evaluate for key concepts, not exact wording. If partially correct, say what they got right and what's missing. Be encouraging but honest.
 
