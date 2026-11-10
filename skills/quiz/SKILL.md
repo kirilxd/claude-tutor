@@ -64,8 +64,11 @@ A concept is **stuck** when it was answered wrong in at least 2 of its last 3 at
 
 - Before asking about a stuck concept, tell the user: "You've missed [concept] in [N] of your last 3 attempts — let's re-learn it before I test it again."
 - Re-teach it briefly: the core idea, *why* it works that way, and one worked example. Use a **different angle or example** than the one the user keeps getting wrong, and name the specific mistake from earlier attempts (e.g. the wrong answer they keep giving).
-- Then ask **one fresh question** in a new scenario. Do not ask the same question you just explained.
-- Grade and schedule that answer as usual. Never skip teaching a stuck concept just because it's due.
+- **Don't test it right away.** A question straight after the explanation is answered from the screen, not from memory — it measures copying, not learning.
+- Instead, **interleave**: ask 1–2 questions on *other* concepts (due or previously learned) first, then come back to the re-taught concept with a fresh question in a new scenario. If no other question fits this session, schedule the check for the next session (`nextReview` = tomorrow) instead of asking now.
+- Grade and schedule only that delayed question. Never skip teaching a stuck concept just because it's due.
+
+**Interleave by default:** never order a session as "teach X → quiz X". Teach X, quiz something older, and test X later in the session or next session. Questions on different concepts should alternate (A, B, A, C) rather than come in blocks (A, A, A).
 
 ### Step 3: Generate Questions
 
