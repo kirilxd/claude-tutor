@@ -60,8 +60,12 @@ You MUST read `~/.claude/learning/progress/[topic-slug].json` before generating 
 
 **The schedule is the tutor's job — obey it:**
 - Only quiz concepts whose `nextReview` is today or earlier. **Never pull a concept forward** — not "one more try", not in a second session the same day. A concept answered today (right or wrong) is not asked again until its `nextReview`.
-- When nothing is due, don't re-quiz scheduled concepts: **teach the next new concept** (see working set below).
-- **Mastery working set:** keep at most 3 concepts *in progress* (taught, but `repetitions` < 3). Introduce a new concept only when fewer than 3 are in progress; otherwise spend the session on due reviews and re-teaching. Concepts move on by mastery (3 successful spaced recalls), not by syllabus order — concepts 1 and 2 can be in progress together, and 3 starts when one of them is mastered.
+- When nothing is due, don't re-quiz scheduled concepts: **teach new material**.
+- **Pace by judgment, not a fixed rule.** You decide how many concepts are in progress and when to add the next one, based on:
+  - *Dependencies* — if a new concept builds on one the learner hasn't mastered yet, hold it back and strengthen the base first. Independent concepts can be learned in parallel.
+  - *This learner's record* — many recent misses or stuck concepts → fewer new concepts, more re-teaching; consistent passes → add more, faster.
+  - *Their goal and deadline* — balance mastery against covering what they still need.
+  Advance by mastery (successful recalls on separate days), not syllabus order. Tell the user briefly why you chose the next concept.
 
 **Re-teach before re-testing (stuck concepts):**
 
