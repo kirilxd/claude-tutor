@@ -58,6 +58,20 @@ You MUST read `~/.claude/learning/progress/[topic-slug].json` before generating 
 - Weight questions toward `weakAreas` from prior quizzes
 - If `spacedRepetition` data exists, check for concepts where `nextReview` is today or in the past. These are overdue for review — tell the user "You have N concepts due for review" and include them in the quiz
 
+**If the plan has a `deadline`** — open the session with one status line, so the user sees where they stand before the first question:
+
+```
+[started]/[total] concepts started · [D] days left · about [N] new concepts per day to cover everything
+```
+
+`total` = every `keyConcepts` entry in the plan; `started` = those that have a `spacedRepetition` entry. Then decide what this session spends its time on:
+
+- **Coverage on pace** → due reviews first, then new concepts.
+- **Coverage behind** → new concepts first. Review only the due concepts most at risk (most misses, lowest `easeFactor`, or needed for what comes next) and let the rest slide a day or two. A late review costs less than a concept the user never saw before the deadline.
+- These are judgment calls, not quotas. Tell the user in one line what you chose and why.
+
+No `deadline` in the plan → skip this block.
+
 ### Step 3: Generate Questions
 
 Generate a set of questions (default: 5, user can request more/fewer).
@@ -93,11 +107,37 @@ Short answer — "Q4/5 (Short Answer) — Explain the difference between a Pod a
 
 **After the user answers, give feedback:**
 
-If correct:
-> Correct! [1-2 sentence explanation reinforcing the concept]
+Grade **every** answer on four levels and show the grade — never leave an answer ungraded:
 
-If incorrect:
-> Not quite. The answer is [correct answer]. [2-3 sentence explanation helping the user understand]
+| Grade | When | Counts as |
+|---|---|---|
+| **Again** | Blank, wrong, or built on a misconception | incorrect |
+| **Hard** | Core idea right, but a detail is wrong or missing, or the answer came with clear hesitation | correct |
+| **Good** | Correct and precise | correct |
+| **Easy** | Fluent, precise, and applied to a new case without effort | correct |
+
+Read confidence from how the user answers (hedging, "I guess", a long pause they mention) — don't ask for it separately. A confident wrong answer is a misconception: name the wrong belief explicitly in the feedback, because that is the error feedback fixes best. A hesitant right answer is Hard, not Good.
+
+If correct (Hard / Good / Easy):
+> [Grade] — [1-2 sentence explanation reinforcing the concept; for Hard, name the missing detail]
+
+If incorrect (Again):
+> Again — the answer is [correct answer]. [2-3 sentence explanation helping the user understand]
+
+**Retry an Again answer in the same session.** After 2-3 questions on other concepts, ask the missed concept once more in a new scenario, until the user gets it right once. Only the first answer sets the grade and the schedule; the retry is practice. Never retry straight after the explanation — the answer is still on screen.
+
+**When a concept is stuck, stop quizzing it.** A concept is stuck when the user has missed it in about three sessions or more (count its `"correct": false` entries across `quizzes`). Asking the same thing again tests nothing new and only costs time. Change the approach instead:
+
+1. **Look for a shared cause.** If several stuck concepts fail in the same way, one missing prerequisite is probably behind them. Teach that one thing first; it may clear them all.
+2. **A procedure** (writing code, a command, a calculation, a derivation) — split it into parts small enough to get right one at a time, and track each part as its own concept named `[concept]: [part]`. Take each part through three stages, one stage per successful review, one stage back on a miss:
+   - **Worked example** — show a full solution; the user explains why each step is there. Save with `"format": "worked-example"`.
+   - **Fill the gap** — show the solution with one part missing; the user supplies it. Save with `"format": "completion"`.
+   - **Alone** — the user writes it from nothing (any normal format).
+
+   The `format` of the part's last question tells you which stage comes next.
+3. **A fact or an idea** — teach it again in a different way (a new analogy, or a direct contrast with the concept it gets confused with), then return it to normal reviews.
+
+Tell the user in one line that you are changing approach and why.
 
 For short answers, evaluate for key concepts, not exact wording. If partially correct, say what they got right and what's missing. Be encouraging but honest.
 
@@ -112,11 +152,14 @@ After all questions, present a summary:
 Score: [correct]/[total] ([percentage]%)
 
 [For each question:]
-[✓/✗] Q[n]: [brief concept label]
+[✓/✗] Q[n]: [brief concept label] — [grade] → next review [date]
 
 [If there are wrong answers:]
 Weak areas: [list concepts that need review]
 Suggestion: [specific actionable advice]
+
+Session: [n] questions — [n] on new concepts, [n] reviews · [n] concepts moved forward
+[If the plan has a deadline:] Coverage: [started]/[total] concepts started · [D] days left
 ──────────────────────────────────────────
 ```
 
@@ -147,7 +190,8 @@ The progress file at `~/.claude/learning/progress/{topic-slug}.json` is the **si
         {
           "format": "mcq",
           "concept": "concept-label",
-          "correct": true
+          "correct": true,
+          "grade": "good"
         }
       ]
     }
@@ -167,6 +211,7 @@ The progress file at `~/.claude/learning/progress/{topic-slug}.json` is the **si
 - `spacedRepetition` keys must be **concept names** (matching the `concept` field in questions), NOT module IDs.
   - CORRECT: `"spacedRepetition": {"DNS resolution": {...}}`
   - WRONG: `"spacedRepetition": {"1": {...}, "2": {...}}`
+- Each question's `grade` is one of `"again"`, `"hard"`, `"good"`, `"easy"`. `correct` is `false` for `again` and `true` for the other three. Older entries without `grade` are fine.
 - All `spacedRepetition` values must have `easeFactor` (number), `intervalDays` (integer), `nextReview` (YYYY-MM-DD string), `repetitions` (integer). None can be null.
 
 **Compute weak/strong areas (aggregate across ALL quizzes):**
@@ -177,21 +222,29 @@ The progress file at `~/.claude/learning/progress/{topic-slug}.json` is the **si
 
 **Update spaced repetition schedule:**
 
-For each concept tested in this quiz, update the `spacedRepetition` field in the progress file using the SM-2 algorithm:
+For each concept tested in this quiz, set its next review from the grade. There is no fixed formula: the goal is to ask again just before the user would forget, and to spend no review time on what they already know. Start from these defaults, then adjust by judgment:
 
-**For each concept:**
-1. Determine quality score (0-5): correct on first try = 5, correct after hesitation = 4, incorrect but close = 2, incorrect = 0
-2. If quality >= 3 (correct):
-   - If first review (`repetitions` was 0): `intervalDays` = 1
-   - If second review (`repetitions` was 1): `intervalDays` = 6
-   - Subsequent: `intervalDays` = round(previous interval × `easeFactor`)
-   - `repetitions` += 1
-3. If quality < 3 (incorrect):
-   - Reset: `intervalDays` = 1, `repetitions` = 0
-4. Update ease factor: `easeFactor` = max(1.3, easeFactor + 0.1 - (5 - quality) × (0.08 + (5 - quality) × 0.02))
-5. Compute `nextReview` = today + `intervalDays` (format: YYYY-MM-DD)
+| Grade | Next review | Also |
+|---|---|---|
+| **Again** | 1 day (plus the same-session retry) — or about a quarter of the previous interval if that was long | `repetitions` = 0, `easeFactor` − 0.2 |
+| **Hard** | ~3 days, or previous interval × 1.2 if longer | `repetitions` += 1, `easeFactor` − 0.15 |
+| **Good** | ~1 week, or previous interval × `easeFactor` if longer | `repetitions` += 1 |
+| **Easy** | ~2 weeks, or previous interval × `easeFactor` × 1.3 if longer | `repetitions` += 1, `easeFactor` + 0.15 |
 
-For new concepts (not yet in `spacedRepetition`), initialize with `easeFactor: 2.5`, `intervalDays: 1`, `repetitions: 0`, `nextReview: today + 1 day`.
+`easeFactor` never goes below 1.3. `nextReview` = today + `intervalDays` (format: YYYY-MM-DD).
+
+Adjust the default when you have a reason, and tell the user in one short line why:
+- **The concept's history** — a Good after three misses is less stable than a Good on a concept never missed: shorten it. A long run of Good/Easy: lengthen it.
+- **The concept itself** — a hard, easily-confused, or foundational concept comes back sooner than an isolated fact.
+- **A miss is not a reset.** One slip on a well-known concept should not send it back to daily review.
+
+- **A deadline** — no review lands after the plan's `deadline`. When the default would, bring it back so one more review falls before it; a gap of roughly 10-20% of the time left holds best for a test at that distance (Cepeda et al., 2008). Spread these final reviews over the last days instead of piling them on the day before.
+
+A concept "moved forward" in the results when its new interval is longer than its previous one.
+
+Only quiz a concept when its `nextReview` is today or earlier, apart from the same-session retry. Reviewing something the user still remembers well wastes their time.
+
+For new concepts (not yet in `spacedRepetition`), start from `easeFactor: 2.5`, `intervalDays: 1`, `repetitions: 0`, then apply the grade of the first answer.
 
 **Validation before writing:** Every SR entry must have all 4 fields set to non-null values. If any field would be null, use the default: `easeFactor: 2.5`, `intervalDays: 1`, `repetitions: 0`, `nextReview: tomorrow`.
 
