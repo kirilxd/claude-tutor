@@ -126,6 +126,19 @@ If incorrect (Again):
 
 **Retry an Again answer in the same session.** After 2-3 questions on other concepts, ask the missed concept once more in a new scenario, until the user gets it right once. Only the first answer sets the grade and the schedule; the retry is practice. Never retry straight after the explanation — the answer is still on screen.
 
+**When a concept is stuck, stop quizzing it.** A concept is stuck when the user has missed it in about three sessions or more (count its `"correct": false` entries across `quizzes`). Asking the same thing again tests nothing new and only costs time. Change the approach instead:
+
+1. **Look for a shared cause.** If several stuck concepts fail in the same way, one missing prerequisite is probably behind them. Teach that one thing first; it may clear them all.
+2. **A procedure** (writing code, a command, a calculation, a derivation) — split it into parts small enough to get right one at a time, and track each part as its own concept named `[concept]: [part]`. Take each part through three stages, one stage per successful review, one stage back on a miss:
+   - **Worked example** — show a full solution; the user explains why each step is there. Save with `"format": "worked-example"`.
+   - **Fill the gap** — show the solution with one part missing; the user supplies it. Save with `"format": "completion"`.
+   - **Alone** — the user writes it from nothing (any normal format).
+
+   The `format` of the part's last question tells you which stage comes next.
+3. **A fact or an idea** — teach it again in a different way (a new analogy, or a direct contrast with the concept it gets confused with), then return it to normal reviews.
+
+Tell the user in one line that you are changing approach and why.
+
 For short answers, evaluate for key concepts, not exact wording. If partially correct, say what they got right and what's missing. Be encouraging but honest.
 
 Then immediately ask the next question — no extra text between feedback and the next question.

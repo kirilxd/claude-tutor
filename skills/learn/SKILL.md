@@ -316,6 +316,7 @@ Teach the module interactively. The goal is genuine understanding, not informati
    - Provide a concrete example
    - If the learner profile says "hands-on", emphasize examples and exercises
    - If "theory-first", lead with principles before examples
+   - If the concept is a procedure (writing code, a command, a calculation), show one fully worked example and have the user complete a partial one before asking them to do it alone
 
 3. **Check understanding — after a gap** — Before explaining a concept, ask the user for a quick guess (a wrong guess makes the explanation stick; never grade it). After every 2-3 concepts, ask a comprehension question about an **earlier** concept, not the one just explained — its answer is still on screen. If the user gets it wrong, re-explain differently before moving on.
 
