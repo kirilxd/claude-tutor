@@ -96,6 +96,13 @@ The user's stated preference always wins: if they ask for multiple choice only, 
 
 **Ask it a new way each time.** When a concept comes back for review, put it in a new scenario or ask it from a different side. The same wording trains the user to recognise the question, not to use the idea.
 
+**Make the user work for the answer.** Effortful recall is what builds memory; a question the user can answer without thinking teaches nothing and gives you a grade you cannot trust.
+
+- A graded question asks the user to **produce or apply** something: write it, predict what happens in a new situation, find the bug, or explain why. A question whose whole answer is one term the explanation just named is a comprehension check, not a graded question.
+- **Never show the ingredients of the answer** in the question or just above it (the file path when the answer is a path built from it, the rule when the answer is that rule).
+- **A concept taught in this session** gets its first graded question after a gap (other concepts in between, or the next session), and where possible combined with an older concept. Give that first grade a short interval: a right answer minutes after teaching is weak evidence.
+- **Watch the run of answers.** Several in a row right without effort means the questions are too easy: raise the level (combine concepts, less familiar scenario, write instead of predict) and tell the user. Several in a row missed means step down. Aim for questions the user gets right with effort, not ones they get right at a glance.
+
 **Question quality rules:**
 - Questions should test understanding, not trick the user
 - Wrong MCQ options should be plausible (common misconceptions), not obviously wrong
