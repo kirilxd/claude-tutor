@@ -15,7 +15,7 @@ The learning system uses three separate directories. Each directory has ONE purp
 
 | Directory | Stores | Allowed fields |
 |---|---|---|
-| `~/.claude/learning/plans/` | Learning plans ONLY | topic, slug, created, level, goal, depth, timeCommitment, modules, totalEstimatedTime, diagnostic |
+| `~/.claude/learning/plans/` | Learning plans ONLY | topic, slug, created, level, goal, depth, timeCommitment, modules, totalEstimatedTime, diagnostic, deadline, assessment |
 | `~/.claude/learning/progress/` | Quiz progress ONLY | topic, quizzes, weakAreas, strongAreas, overallScore, spacedRepetition |
 | `~/.claude/learning/` (root) | index.json + profile.json ONLY | topics (index), learningStyle/background/createdTopics (profile) |
 
@@ -123,6 +123,14 @@ Ask "How much time do you want to invest?" with options:
 - A weekend — Solid foundation with practice
 - A week — In-depth study with projects
 - Ongoing study — Long-term learning commitment
+
+**Deadline** (only when there is one):
+
+If the user's message or goal mentions an exam, interview, certification, or any date, ask "When do you need this by?" and save the date as `deadline` in the plan. It lets `/quiz` and `/review` pace new material against the days left and keep every review before that date. If nothing suggests a date, do not ask — most learning has no deadline, and the field is simply left out.
+
+**How the knowledge will be used** (infer first, ask only if unclear):
+
+People remember best when they practise in the form they will later need. Work out from the goal how the user will use or be tested on this — explaining it aloud in an interview, writing code, a multiple-choice exam, a written exam, using it at work with no test at all — and save it in a few words as `assessment` in the plan (for example `"oral interview"`, `"multiple-choice exam"`, `"writing code"`). If the goal does not make it clear and it would change how you quiz, ask "How will you use or be tested on this?" Otherwise leave the field out; `/quiz` then uses its default mix.
 
 **If no learner profile exists**, also ask "How do you prefer to learn?" with options:
 - Reading docs & articles — Text-based, self-paced learning
@@ -257,9 +265,13 @@ The JSON format:
       ]
     }
   ],
-  "totalEstimatedTime": "15 hours"
+  "totalEstimatedTime": "15 hours",
+  "deadline": "YYYY-MM-DD",
+  "assessment": "oral interview"
 }
 ```
+
+`deadline` and `assessment` are optional — omit either when it does not apply.
 
 3. **Update index** at `~/.claude/learning/index.json`:
    - **Read the existing file first** — do not overwrite other topics
@@ -309,8 +321,9 @@ Teach the module interactively. The goal is genuine understanding, not informati
    - Provide a concrete example
    - If the learner profile says "hands-on", emphasize examples and exercises
    - If "theory-first", lead with principles before examples
+   - If the concept is a procedure (writing code, a command, a calculation), show one fully worked example and have the user complete a partial one before asking them to do it alone
 
-3. **Check understanding** — After every 2-3 concepts, ask a quick multiple choice comprehension question. This isn't a quiz — it's a "does this make sense?" check. If the user gets it wrong, re-explain differently before moving on.
+3. **Check understanding — after a gap** — Before explaining a concept, ask the user for a quick guess (a wrong guess makes the explanation stick; never grade it). After every 2-3 concepts, ask a comprehension question about an **earlier** concept, not the one just explained — its answer is still on screen. If the user gets it wrong, re-explain differently before moving on.
 
 4. **Reference resources** — Point to specific resources from the module: "For a deeper dive on this, check out [Resource Title] — it covers [specific aspect]."
 

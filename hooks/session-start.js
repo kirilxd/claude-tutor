@@ -13,6 +13,7 @@ try {
   const today = new Date().toISOString().split('T')[0];
   let dueCount = 0;
   const dueTopics = [];
+  const deadlines = [];
 
   for (const [slug, topic] of Object.entries(index.topics || {})) {
     const progressPath = path.join(learningDir, topic.progressFile);
@@ -28,6 +29,17 @@ try {
       }
     }
 
+    const planPath = topic.planFile && path.join(learningDir, topic.planFile);
+    if (planPath && fs.existsSync(planPath)) {
+      const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
+      const daysLeft = Math.round((new Date(plan.deadline) - new Date(today)) / 86400000);
+      if (daysLeft >= 0) {
+        const concepts = (plan.modules || []).flatMap(m => m.keyConcepts || []);
+        const notStarted = concepts.filter(c => !sr[c]).length;
+        deadlines.push(`${topic.displayName || slug}: ${notStarted} of ${concepts.length} concepts not started, ${daysLeft} day(s) to the deadline.`);
+      }
+    }
+
     if (topicDue > 0) {
       dueCount += topicDue;
       dueTopics.push(`${topic.displayName || slug} (${topicDue})`);
@@ -38,6 +50,7 @@ try {
     const topicList = dueTopics.join(', ');
     console.log(`You have ${dueCount} concept(s) due for review: ${topicList}. Run /review to see details or /quiz to practice.`);
   }
+  for (const line of deadlines) console.log(line);
 } catch (e) {
   // Silently exit — don't block session start for data issues
   process.exit(0);
