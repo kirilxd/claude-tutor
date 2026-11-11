@@ -1,6 +1,6 @@
 ---
 name: quiz
-description: Use when user wants to be tested or quizzed on any topic. Triggers on "quiz me", "test me", "test my knowledge", "practice questions", "check my understanding", or when asking for a quiz on something they've been learning. Also use when user finishes a learning module and wants to check understanding. Works with or without a prior learning plan.
+description: Use when user wants to be tested or quizzed on any topic. Triggers on "quiz me", "test me", "test my knowledge", "practice questions", "check my understanding", "mock exam", "practice exam", or when asking for a quiz on something they've been learning. Also use when user finishes a learning module and wants to check understanding. Works with or without a prior learning plan.
 ---
 
 # Quiz — Interactive Knowledge Testing
@@ -289,6 +289,24 @@ This is backwards-compatible — if `spacedRepetition` is missing, treat all con
    - Set `topics[slug].quizzesTaken` = total number of quizzes in the progress file
    - Set `topics[slug].overallScore` = the computed overallScore (percentage, 0-100)
    - Set `topics[slug].lastActivity` = today's date (YYYY-MM-DD)
+
+## Mock Exam Mode
+
+Use when the user asks for a mock exam, practice exam, or final test (`/quiz [topic] mock`), or offer one yourself when a plan's `deadline` is close and most concepts have been started. A normal quiz teaches as it goes; a mock exam measures. It shows the user what the real test will feel like and shows you where the remaining time should go.
+
+**How it differs from a normal quiz:**
+
+- **Everything is in scope.** Draw questions from every module, in mixed order, whether or not the concepts are due. Include concepts not yet started — a blank there is useful information.
+- **Exam format.** Use the plan's `assessment` form if there is one. Ask the user how long the real test is and how many questions it has, and mirror that; if they don't know, agree on a length together.
+- **No feedback during the exam.** After each answer, say only "Noted" and ask the next question. No grades, no explanations, no retries, no hints.
+- **Timed if the real test is.** State the time limit at the start and tell the user when it is over. You cannot run a clock, so ask the user to keep time.
+
+**After the last question:**
+
+1. Grade every answer on the four levels and show the full results, grouped by module, with the correct answer and a short explanation for each miss.
+2. Reschedule every concept that was tested from its grade, as in Step 6. This is the one case where a concept's review moves although it was not due. Concepts that were not tested keep their schedule.
+3. Save it as a quiz with `"difficulty": "mock"` and `"module": null`.
+4. End with a plan for the time left: the modules that scored lowest, and what to do about each (new teaching, worked examples, or just reviews).
 
 ## No-Plan Quiz Mode
 
