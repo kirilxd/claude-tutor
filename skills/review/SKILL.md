@@ -39,7 +39,7 @@ The review skill reads data written by the learn and quiz skills. Here are the f
 
 **Progress files** (`~/.claude/learning/progress/<slug>.json`) — contain `quizzes[]` (each with `date`, `module`, `score`, `total`, `questions[]`), `weakAreas[]`, `strongAreas[]`, `overallScore` (percentage 0-100, not fraction).
 
-Progress files now also contain `spacedRepetition` — a map of concept labels to SM-2 scheduling data (`easeFactor`, `intervalDays`, `nextReview`, `repetitions`). Concepts with `nextReview` at or before today are due for review.
+Progress files now also contain `spacedRepetition` — a map of concept labels to review-scheduling data (`easeFactor`, `intervalDays`, `nextReview`, `repetitions`). Concepts with `nextReview` at or before today are due for review.
 
 ## Process
 
