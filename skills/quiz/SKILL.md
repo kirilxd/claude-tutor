@@ -58,6 +58,20 @@ You MUST read `~/.claude/learning/progress/[topic-slug].json` before generating 
 - Weight questions toward `weakAreas` from prior quizzes
 - If `spacedRepetition` data exists, check for concepts where `nextReview` is today or in the past. These are overdue for review — tell the user "You have N concepts due for review" and include them in the quiz
 
+**If the plan has a `deadline`** — open the session with one status line, so the user sees where they stand before the first question:
+
+```
+[started]/[total] concepts started · [D] days left · about [N] new concepts per day to cover everything
+```
+
+`total` = every `keyConcepts` entry in the plan; `started` = those that have a `spacedRepetition` entry. Then decide what this session spends its time on:
+
+- **Coverage on pace** → due reviews first, then new concepts.
+- **Coverage behind** → new concepts first. Review only the due concepts most at risk (most misses, lowest `easeFactor`, or needed for what comes next) and let the rest slide a day or two. A late review costs less than a concept the user never saw before the deadline.
+- These are judgment calls, not quotas. Tell the user in one line what you chose and why.
+
+No `deadline` in the plan → skip this block.
+
 ### Step 3: Generate Questions
 
 Generate a set of questions (default: 5, user can request more/fewer).
@@ -130,6 +144,9 @@ Score: [correct]/[total] ([percentage]%)
 [If there are wrong answers:]
 Weak areas: [list concepts that need review]
 Suggestion: [specific actionable advice]
+
+Session: [n] questions — [n] on new concepts, [n] reviews · [n] concepts moved forward
+[If the plan has a deadline:] Coverage: [started]/[total] concepts started · [D] days left
 ──────────────────────────────────────────
 ```
 
@@ -207,6 +224,10 @@ Adjust the default when you have a reason, and tell the user in one short line w
 - **The concept's history** — a Good after three misses is less stable than a Good on a concept never missed: shorten it. A long run of Good/Easy: lengthen it.
 - **The concept itself** — a hard, easily-confused, or foundational concept comes back sooner than an isolated fact.
 - **A miss is not a reset.** One slip on a well-known concept should not send it back to daily review.
+
+- **A deadline** — no review lands after the plan's `deadline`. When the default would, bring it back so one more review falls before it; a gap of roughly 10-20% of the time left holds best for a test at that distance (Cepeda et al., 2008). Spread these final reviews over the last days instead of piling them on the day before.
+
+A concept "moved forward" in the results when its new interval is longer than its previous one.
 
 Only quiz a concept when its `nextReview` is today or earlier, apart from the same-session retry. Reviewing something the user still remembers well wastes their time.
 

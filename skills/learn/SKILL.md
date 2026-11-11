@@ -15,7 +15,7 @@ The learning system uses three separate directories. Each directory has ONE purp
 
 | Directory | Stores | Allowed fields |
 |---|---|---|
-| `~/.claude/learning/plans/` | Learning plans ONLY | topic, slug, created, level, goal, depth, timeCommitment, modules, totalEstimatedTime, diagnostic |
+| `~/.claude/learning/plans/` | Learning plans ONLY | topic, slug, created, level, goal, depth, timeCommitment, modules, totalEstimatedTime, diagnostic, deadline |
 | `~/.claude/learning/progress/` | Quiz progress ONLY | topic, quizzes, weakAreas, strongAreas, overallScore, spacedRepetition |
 | `~/.claude/learning/` (root) | index.json + profile.json ONLY | topics (index), learningStyle/background/createdTopics (profile) |
 
@@ -123,6 +123,10 @@ Ask "How much time do you want to invest?" with options:
 - A weekend — Solid foundation with practice
 - A week — In-depth study with projects
 - Ongoing study — Long-term learning commitment
+
+**Deadline** (only when there is one):
+
+If the user's message or goal mentions an exam, interview, certification, or any date, ask "When do you need this by?" and save the date as `deadline` in the plan. It lets `/quiz` and `/review` pace new material against the days left and keep every review before that date. If nothing suggests a date, do not ask — most learning has no deadline, and the field is simply left out.
 
 **If no learner profile exists**, also ask "How do you prefer to learn?" with options:
 - Reading docs & articles — Text-based, self-paced learning
@@ -257,9 +261,12 @@ The JSON format:
       ]
     }
   ],
-  "totalEstimatedTime": "15 hours"
+  "totalEstimatedTime": "15 hours",
+  "deadline": "YYYY-MM-DD"
 }
 ```
+
+`deadline` is optional — omit the field when the user has no date to hit.
 
 3. **Update index** at `~/.claude/learning/index.json`:
    - **Read the existing file first** — do not overwrite other topics

@@ -1,6 +1,6 @@
 // Schema validation for learning data — mirrors enforce-paths.js logic
 
-const PLAN_FIELDS = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'timeCommitment', 'modules', 'totalEstimatedTime', 'diagnostic'];
+const PLAN_FIELDS = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'timeCommitment', 'modules', 'totalEstimatedTime', 'diagnostic', 'deadline'];
 const PROGRESS_FIELDS = ['topic', 'quizzes', 'weakAreas', 'strongAreas', 'overallScore', 'spacedRepetition'];
 const QUIZ_FIELDS = ['quizzes', 'weakAreas', 'strongAreas', 'spacedRepetition', 'overallScore'];
 const PLAN_ONLY_FIELDS = ['modules', 'resources', 'timeCommitment', 'totalEstimatedTime'];
@@ -52,7 +52,7 @@ function validateProgress(data) {
 
 const GRADES = ['again', 'hard', 'good', 'easy'];
 
-function scheduleReview(existing, grade, today = new Date()) {
+function scheduleReview(existing, grade, today = new Date(), deadline = null) {
   if (!GRADES.includes(grade)) throw new Error(`Unknown grade: ${grade}. Use one of ${GRADES.join(', ')}`);
   const prev = existing?.intervalDays || 1;
   let ef = existing?.easeFactor || 2.5;
@@ -71,6 +71,13 @@ function scheduleReview(existing, grade, today = new Date()) {
     if (grade === 'easy') { interval = Math.max(14, Math.round(prev * ef * 1.3)); ef += 0.15; }
   }
   ef = Math.max(1.3, ef);
+
+  if (deadline) {
+    // No review may land after the deadline: keep one more before it.
+    // ponytail: caps to the day before; the quiz skill spreads these by judgment.
+    const daysLeft = Math.round((new Date(deadline) - new Date(new Date(today).toLocaleDateString('sv-SE'))) / 86400000);
+    if (daysLeft > 1) interval = Math.min(interval, daysLeft - 1);
+  }
 
   const next = new Date(today);
   next.setDate(next.getDate() + interval);

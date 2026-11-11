@@ -14,6 +14,9 @@ assert.strictEqual(scheduleReview(known, 'good', today).intervalDays, 50);
 assert.strictEqual(scheduleReview(known, 'again', today).intervalDays, 5);
 assert.strictEqual(scheduleReview(known, 'again', today).repetitions, 0);
 assert.strictEqual(scheduleReview({ intervalDays: 1, easeFactor: 1.3, repetitions: 0 }, 'again', today).easeFactor, 1.3);
+// With a deadline, the next review lands before it, never after.
+assert.strictEqual(scheduleReview(known, 'good', today, '2026-01-11').nextReview, '2026-01-10');
+assert.strictEqual(scheduleReview(undefined, 'hard', today, '2026-03-01').intervalDays, 3);
 assert.throws(() => scheduleReview(undefined, 'meh', today));
 
 console.log('schedule: all checks passed');

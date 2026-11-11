@@ -71,6 +71,7 @@ Read `~/.claude/learning/index.json`.
   Module 2: [Title]    [progress bar] not started
   ...
   Weak areas: [list]
+  [If the plan has a deadline:] Deadline: [date] ([D] days left) — [started]/[total] concepts started
   Next step: [actionable suggestion]
 
 [Topic Name 2] ...
@@ -110,6 +111,7 @@ If any concepts have `nextReview` at or before today across any topic, show the 
 
 Always end with one clear, actionable suggestion:
 
+- If the plan has a `deadline` and the concepts not yet started cannot be covered at the current pace: "[N] concepts not started and [D] days left — spend the next session on new material. Run `/quiz [topic]`." This comes before due reviews: a late review costs less than a concept never seen.
 - If concepts are due for review (nextReview <= today): "You have [N] concepts due for review in [topic]. Run `/quiz [topic]` to keep them fresh — spaced repetition works best when you review on schedule."
 - If a topic has weak areas: "Retake the quiz on [topic] focusing on [weak area]. Use `/quiz [topic]`"
 - If a module is unstarted: "Start Module [N]: [title]. Check `/resources [topic]` for study materials"

@@ -68,6 +68,7 @@ plan → study → quiz → review → repeat
 | 🎯 | **Weak area targeting** | Quizzes prioritize concepts you've gotten wrong before |
 | 👤 | **Learner profiles** | Remembers your style (hands-on, visual, theory-first) across all topics |
 | 🔍 | **Diagnostic assessment** | Calibrates your actual level so you skip what you already know |
+| 📅 | **Deadline pacing** | Give a plan a deadline and sessions balance new material against reviews, so everything is covered before the date |
 | 🔔 | **Session-start reminders** | Shows overdue reviews every time you open Claude Code |
 | 🛡️ | **Schema enforcement** | PreToolUse hooks prevent data corruption automatically |
 | 🌐 | **Web dashboard** | Full visual interface — create plans, take quizzes, view calendar |

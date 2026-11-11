@@ -454,8 +454,10 @@ router.post('/quiz/submit', (req, res) => {
 
   // Reschedule each concept (auto-marked: right → good, wrong → again)
   if (!progress.spacedRepetition) progress.spacedRepetition = {};
+  const planFile = findPlanFile(req.params.slug);
+  const deadline = planFile ? readJson(planFile).deadline : null;
   for (const a of answers) {
-    progress.spacedRepetition[a.concept] = scheduleReview(progress.spacedRepetition[a.concept], a.correct ? 'good' : 'again');
+    progress.spacedRepetition[a.concept] = scheduleReview(progress.spacedRepetition[a.concept], a.correct ? 'good' : 'again', new Date(), deadline);
   }
 
   // Compute weak/strong
