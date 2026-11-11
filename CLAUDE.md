@@ -37,7 +37,7 @@ All user data lives in `~/.claude/learning/` (absolute path, never relative):
 |---|---|---|
 | `~/.claude/learning/index.json` | Topic registry | `topics` (map of slug → metadata) |
 | `~/.claude/learning/profile.json` | Learner preferences | `learningStyle`, `background`, `createdTopics` |
-| `~/.claude/learning/plans/<slug>-<date>.json` | Learning plans | `topic`, `slug`, `created`, `level`, `goal`, `depth`, `timeCommitment`, `modules`, `totalEstimatedTime`, `diagnostic`, `deadline` |
+| `~/.claude/learning/plans/<slug>-<date>.json` | Learning plans | `topic`, `slug`, `created`, `level`, `goal`, `depth`, `timeCommitment`, `modules`, `totalEstimatedTime`, `diagnostic`, `deadline`, `assessment` |
 | `~/.claude/learning/progress/<slug>.json` | Quiz progress | `topic`, `quizzes`, `weakAreas`, `strongAreas`, `overallScore`, `spacedRepetition` |
 
 **The critical rule:** Plan fields and progress fields must never cross directories. The hook blocks this, but skills must also get the paths right. `overallScore` is a percentage (0-100), not a fraction (0-1).

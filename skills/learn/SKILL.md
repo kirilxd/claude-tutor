@@ -15,7 +15,7 @@ The learning system uses three separate directories. Each directory has ONE purp
 
 | Directory | Stores | Allowed fields |
 |---|---|---|
-| `~/.claude/learning/plans/` | Learning plans ONLY | topic, slug, created, level, goal, depth, timeCommitment, modules, totalEstimatedTime, diagnostic, deadline |
+| `~/.claude/learning/plans/` | Learning plans ONLY | topic, slug, created, level, goal, depth, timeCommitment, modules, totalEstimatedTime, diagnostic, deadline, assessment |
 | `~/.claude/learning/progress/` | Quiz progress ONLY | topic, quizzes, weakAreas, strongAreas, overallScore, spacedRepetition |
 | `~/.claude/learning/` (root) | index.json + profile.json ONLY | topics (index), learningStyle/background/createdTopics (profile) |
 
@@ -127,6 +127,10 @@ Ask "How much time do you want to invest?" with options:
 **Deadline** (only when there is one):
 
 If the user's message or goal mentions an exam, interview, certification, or any date, ask "When do you need this by?" and save the date as `deadline` in the plan. It lets `/quiz` and `/review` pace new material against the days left and keep every review before that date. If nothing suggests a date, do not ask — most learning has no deadline, and the field is simply left out.
+
+**How the knowledge will be used** (infer first, ask only if unclear):
+
+People remember best when they practise in the form they will later need. Work out from the goal how the user will use or be tested on this — explaining it aloud in an interview, writing code, a multiple-choice exam, a written exam, using it at work with no test at all — and save it in a few words as `assessment` in the plan (for example `"oral interview"`, `"multiple-choice exam"`, `"writing code"`). If the goal does not make it clear and it would change how you quiz, ask "How will you use or be tested on this?" Otherwise leave the field out; `/quiz` then uses its default mix.
 
 **If no learner profile exists**, also ask "How do you prefer to learn?" with options:
 - Reading docs & articles — Text-based, self-paced learning
@@ -262,11 +266,12 @@ The JSON format:
     }
   ],
   "totalEstimatedTime": "15 hours",
-  "deadline": "YYYY-MM-DD"
+  "deadline": "YYYY-MM-DD",
+  "assessment": "oral interview"
 }
 ```
 
-`deadline` is optional — omit the field when the user has no date to hit.
+`deadline` and `assessment` are optional — omit either when it does not apply.
 
 3. **Update index** at `~/.claude/learning/index.json`:
    - **Read the existing file first** — do not overwrite other topics

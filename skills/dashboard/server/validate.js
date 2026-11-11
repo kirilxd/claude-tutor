@@ -1,6 +1,6 @@
 // Schema validation for learning data — mirrors enforce-paths.js logic
 
-const PLAN_FIELDS = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'timeCommitment', 'modules', 'totalEstimatedTime', 'diagnostic', 'deadline'];
+const PLAN_FIELDS = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'timeCommitment', 'modules', 'totalEstimatedTime', 'diagnostic', 'deadline', 'assessment'];
 const PROGRESS_FIELDS = ['topic', 'quizzes', 'weakAreas', 'strongAreas', 'overallScore', 'spacedRepetition'];
 const QUIZ_FIELDS = ['quizzes', 'weakAreas', 'strongAreas', 'spacedRepetition', 'overallScore'];
 const PLAN_ONLY_FIELDS = ['modules', 'resources', 'timeCommitment', 'totalEstimatedTime'];

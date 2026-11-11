@@ -5,7 +5,7 @@ description: Use when user wants to be tested or quizzed on any topic. Triggers 
 
 # Quiz — Interactive Knowledge Testing
 
-**ALWAYS** use the `AskUserQuestion` tool when asking the user questions, in any context. If you have too many questions for the tool, split them up into multiple calls.
+Use the `AskUserQuestion` tool for questions that have options (multiple choice, true/false, choosing a topic). Ask short-answer questions as a plain message and let the user type or dictate the answer — offering options would turn recall into recognition.
 
 Generate and deliver mixed-format quiz questions based on the user's learning plan. Ask one question at a time, give immediate feedback, track scores, and adapt difficulty based on prior performance.
 
@@ -85,6 +85,17 @@ Generate a set of questions (default: 5, user can request more/fewer).
 | **Short answer** (1-3 sentences) | Conceptual understanding, explanations | ~25% |
 | **Fill-in-the-blank** | Syntax, commands, formulas, key terms | ~15% |
 
+**Match the format to how the user will use the knowledge.** The table above is the default when the plan says nothing. If the plan has an `assessment` field, or the user tells you how they will be tested, shift the mix toward that form:
+
+- Explaining aloud or in writing (interview, oral or written exam) → mostly short answer.
+- Doing (writing code, commands, calculations) → mostly "write it" and fill-in-the-blank tasks.
+- A multiple-choice exam → mostly multiple choice, with some short answer, because recalling an answer builds stronger memory than recognising it (Kang, McDermott & Roediger, 2007).
+- No test, just understanding → keep the default mix.
+
+The user's stated preference always wins: if they ask for multiple choice only, give multiple choice only.
+
+**Ask it a new way each time.** When a concept comes back for review, put it in a new scenario or ask it from a different side. The same wording trains the user to recognise the question, not to use the idea.
+
 **Question quality rules:**
 - Questions should test understanding, not trick the user
 - Wrong MCQ options should be plausible (common misconceptions), not obviously wrong
@@ -93,7 +104,7 @@ Generate a set of questions (default: 5, user can request more/fewer).
 
 ### Step 4: Deliver Interactively
 
-Ask ONE question per message. Use multiple choice with clear options and descriptions for every question. Wait for the user's answer before proceeding to the next.
+Ask ONE question per message. Give clear options and descriptions for multiple choice, true/false, and fill-in-the-blank; ask short answer as a plain message with no options. Wait for the user's answer before proceeding to the next.
 
 **Question format examples:**
 
@@ -103,7 +114,7 @@ True/False — "Q2/5 (True or False) — In TCP, the receiver sends acknowledgme
 
 Fill-in-the-blank — "Q3/5 (Fill in the Blank) — The kubectl command to view all running pods is: kubectl _____ pods -n <namespace>" with 4 options.
 
-Short answer — "Q4/5 (Short Answer) — Explain the difference between a Pod and a Deployment. Pick the closest answer." with 2-3 options plus "Other (None of these match my understanding)".
+Short answer — "Q4/5 (Short Answer) — Explain the difference between a Pod and a Deployment." No options: the user answers in their own words.
 
 **After the user answers, give feedback:**
 
@@ -191,7 +202,8 @@ The progress file at `~/.claude/learning/progress/{topic-slug}.json` is the **si
           "format": "mcq",
           "concept": "concept-label",
           "correct": true,
-          "grade": "good"
+          "grade": "good",
+          "note": "optional — what was wrong or missing, in a few words"
         }
       ]
     }
@@ -201,6 +213,8 @@ The progress file at `~/.claude/learning/progress/{topic-slug}.json` is the **si
   "overallScore": 80
 }
 ```
+
+Add a `note` to a question graded Again or Hard, saying what was wrong or missing (for example `"confused perm level with role"`). Before asking a concept again, read its last `note` and aim the new question at that exact gap. Leave `note` out for Good and Easy.
 
 **CRITICAL format rules — the web dashboard reads these files, so the format must be exact:**
 
