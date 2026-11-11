@@ -20,6 +20,7 @@ Thanks for your interest in contributing!
 3. Run all tests before submitting:
    ```bash
    node tests/test-hooks.js
+   node tests/test-schedule.js
    node skills/dashboard/server/tests/dashboard.test.js
    ```
 4. Open a pull request with a clear description of what you changed and why

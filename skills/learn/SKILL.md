@@ -310,7 +310,7 @@ Teach the module interactively. The goal is genuine understanding, not informati
    - If the learner profile says "hands-on", emphasize examples and exercises
    - If "theory-first", lead with principles before examples
 
-3. **Check understanding** — After every 2-3 concepts, ask a quick multiple choice comprehension question. This isn't a quiz — it's a "does this make sense?" check. If the user gets it wrong, re-explain differently before moving on.
+3. **Check understanding — after a gap** — Before explaining a concept, ask the user for a quick guess (a wrong guess makes the explanation stick; never grade it). After every 2-3 concepts, ask a comprehension question about an **earlier** concept, not the one just explained — its answer is still on screen. If the user gets it wrong, re-explain differently before moving on.
 
 4. **Reference resources** — Point to specific resources from the module: "For a deeper dive on this, check out [Resource Title] — it covers [specific aspect]."
 
