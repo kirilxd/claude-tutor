@@ -35,7 +35,7 @@ teach me about Kubernetes
 
 ## What it does
 
-Claude Tutor creates personalized learning plans, quizzes you with adaptive difficulty, and schedules reviews using SM-2 spaced repetition — all inside Claude Code. Works with any topic: programming, system design, DevOps, languages, science, history, music theory.
+Claude Tutor creates personalized learning plans, quizzes you with adaptive difficulty, and schedules reviews with graded, adaptive spaced repetition — all inside Claude Code. Works with any topic: programming, system design, DevOps, languages, science, history, music theory.
 
 **No slash commands needed.** Just talk naturally:
 
@@ -56,18 +56,19 @@ plan → study → quiz → review → repeat
 1. **Plan** — `/learn` researches your topic and builds a structured plan with modules, concepts, and curated resources
 2. **Study** — Claude teaches each module interactively with analogies, examples, and comprehension checks
 3. **Quiz** — `/quiz` tests you with mixed formats (MCQ, true/false, short answer, fill-in-blank) that adapt to your level
-4. **Review** — SM-2 spaced repetition schedules concept reviews at optimal intervals (1d → 6d → 15d → ...)
+4. **Review** — every answer is graded Again / Hard / Good / Easy; the grade sets the next review (same day → ~3d → ~1w → ~2w, growing with each success)
 5. **Repeat** — `/review` shows progress and recommends what to study next
 
 ## Key features
 
 | | Feature | Details |
 |---|---|---|
-| 🧠 | **SM-2 spaced repetition** | Industry-standard algorithm schedules reviews right before you forget |
+| 🧠 | **Adaptive spaced repetition** | Four-level grading sets each concept's next review: struggling concepts come back soon, mastered ones are left alone |
 | 📊 | **Adaptive difficulty** | Questions get harder as you improve, easier when you struggle |
 | 🎯 | **Weak area targeting** | Quizzes prioritize concepts you've gotten wrong before |
 | 👤 | **Learner profiles** | Remembers your style (hands-on, visual, theory-first) across all topics |
 | 🔍 | **Diagnostic assessment** | Calibrates your actual level so you skip what you already know |
+| 📅 | **Deadline pacing** | Give a plan a deadline and sessions balance new material against reviews, so everything is covered before the date |
 | 🔔 | **Session-start reminders** | Shows overdue reviews every time you open Claude Code |
 | 🛡️ | **Schema enforcement** | PreToolUse hooks prevent data corruption automatically |
 | 🌐 | **Web dashboard** | Full visual interface — create plans, take quizzes, view calendar |
@@ -112,6 +113,7 @@ The dashboard and CLI share the same data. Switch between them freely.
 |---|---|---|
 | `/learn <topic>` | Create a learning plan with web research | `/learn Kubernetes` |
 | `/quiz [topic]` | Take an adaptive quiz | `/quiz` or `/quiz DNS` |
+| `/quiz [topic] mock` | Take a mock exam: all modules, exam format, no feedback until the end | `/quiz DNS mock` |
 | `/review [topic]` | View progress and recommendations | `/review` |
 | `/resources <topic>` | Get curated learning resources | `/resources system design` |
 | `/dashboard` | Launch the web dashboard | `/dashboard` |

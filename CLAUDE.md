@@ -27,7 +27,7 @@ The plugin has three layers that work independently:
 - `enforce-paths.js` — PreToolUse hook on Write/Edit. Blocks wrong paths, schema leakage between plan/progress files, unknown fields, and score format errors. This is the safety net for when Claude invents field names.
 - `session-start.js` — SessionStart hook. Reads spaced repetition data and prints overdue review reminders.
 
-**Dashboard** (`skills/dashboard/server/`) — Express server at localhost:3847. Reads/writes the same JSON files as the CLI. Has its own validation (`validate.js`) that mirrors the hook logic plus SM-2 algorithm implementation.
+**Dashboard** (`skills/dashboard/server/`) — Express server at localhost:3847. Reads/writes the same JSON files as the CLI. Has its own validation (`validate.js`) that mirrors the hook logic plus the graded review scheduler.
 
 ## Data Layout
 
@@ -37,7 +37,7 @@ All user data lives in `~/.claude/learning/` (absolute path, never relative):
 |---|---|---|
 | `~/.claude/learning/index.json` | Topic registry | `topics` (map of slug → metadata) |
 | `~/.claude/learning/profile.json` | Learner preferences | `learningStyle`, `background`, `createdTopics` |
-| `~/.claude/learning/plans/<slug>-<date>.json` | Learning plans | `topic`, `slug`, `created`, `level`, `goal`, `depth`, `timeCommitment`, `modules`, `totalEstimatedTime`, `diagnostic` |
+| `~/.claude/learning/plans/<slug>-<date>.json` | Learning plans | `topic`, `slug`, `created`, `level`, `goal`, `depth`, `timeCommitment`, `modules`, `totalEstimatedTime`, `diagnostic`, `deadline`, `assessment` |
 | `~/.claude/learning/progress/<slug>.json` | Quiz progress | `topic`, `quizzes`, `weakAreas`, `strongAreas`, `overallScore`, `spacedRepetition` |
 
 **The critical rule:** Plan fields and progress fields must never cross directories. The hook blocks this, but skills must also get the paths right. `overallScore` is a percentage (0-100), not a fraction (0-1).
@@ -57,7 +57,7 @@ When modifying a skill, check the matching command's `allowed-tools` — the ski
 
 The server (`skills/dashboard/server/`) shares data with the CLI via the same JSON files. Key modules:
 - `api.js` — REST routes (`/api/stats`, `/api/topics`, `/api/plans/:slug`, `/api/progress/:slug`, etc.)
-- `validate.js` — Schema validation + SM-2 algorithm (`updateSM2`, `computeWeakStrong`, `getModuleScores`)
+- `validate.js` — Schema validation + graded review scheduling (`scheduleReview`, `computeWeakStrong`, `getModuleScores`)
 - `sse.js` — Server-sent events for streaming Claude responses to the browser
 - `public/app.js` — Vanilla JS SPA (no framework, hash-based routing)
 
