@@ -77,7 +77,7 @@ try {
 
   // Validate schema: plan files must use correct field names
   if (filePath.includes('/learning/plans/') && content.trim().startsWith('{')) {
-    const allowedPlanFields = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'timeCommitment', 'modules', 'totalEstimatedTime', 'diagnostic'];
+    const allowedPlanFields = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'timeCommitment', 'modules', 'totalEstimatedTime', 'diagnostic', 'deadline', 'assessment'];
     try {
       const parsed = JSON.parse(content);
       const topKeys = Object.keys(parsed);
