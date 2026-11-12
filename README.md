@@ -112,6 +112,7 @@ The dashboard and CLI share the same data. Switch between them freely.
 | Command | Description | Example |
 |---|---|---|
 | `/learn <topic>` | Create a learning plan with web research | `/learn Kubernetes` |
+| `/study [topic]` | Run one guided session: due reviews plus new teaching, inside your time budget | `/study DNS, I have 30 minutes` |
 | `/quiz [topic]` | Take an adaptive quiz | `/quiz` or `/quiz DNS` |
 | `/quiz [topic] mock` | Take a mock exam: all modules, exam format, no feedback until the end | `/quiz DNS mock` |
 | `/review [topic]` | View progress and recommendations | `/review` |

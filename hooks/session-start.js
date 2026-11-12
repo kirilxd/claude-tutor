@@ -48,7 +48,7 @@ try {
 
   if (dueCount > 0) {
     const topicList = dueTopics.join(', ');
-    console.log(`You have ${dueCount} concept(s) due for review: ${topicList}. Run /review to see details or /quiz to practice.`);
+    console.log(`You have ${dueCount} concept(s) due for review: ${topicList}. Run /review to see details, /quiz to practice, or /study for a guided session.`);
   }
   for (const line of deadlines) console.log(line);
 } catch (e) {

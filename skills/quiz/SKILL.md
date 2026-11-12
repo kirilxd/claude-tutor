@@ -158,6 +158,8 @@ If incorrect (Again):
 
 Tell the user in one line that you are changing approach and why.
 
+**Grade the concept the question is about.** If the user got that right and slipped on something else (a prerequisite, a neighbouring concept), do not lower this concept's grade for it. Say what the other gap is, and teach or schedule that one on its own.
+
 For short answers, evaluate for key concepts, not exact wording. If partially correct, say what they got right and what's missing. Be encouraging but honest.
 
 Then immediately ask the next question — no extra text between feedback and the next question.
@@ -307,7 +309,7 @@ Use when the user asks for a mock exam, practice exam, or final test (`/quiz [to
 - **Everything is in scope.** Draw questions from every module, in mixed order, whether or not the concepts are due. Include concepts not yet started — a blank there is useful information.
 - **Exam format.** Use the plan's `assessment` form if there is one. Ask the user how long the real test is and how many questions it has, and mirror that; if they don't know, agree on a length together.
 - **No feedback during the exam.** After each answer, say only "Noted" and ask the next question. No grades, no explanations, no retries, no hints.
-- **Timed if the real test is.** State the time limit at the start and tell the user when it is over. You cannot run a clock, so ask the user to keep time.
+- **Timed if the real test is.** State the time limit at the start and tell the user when it is over. Read the clock (`date +%H:%M`) if you can run commands; otherwise ask the user to keep time.
 
 **After the last question:**
 
