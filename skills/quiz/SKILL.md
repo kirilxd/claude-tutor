@@ -108,6 +108,7 @@ The user's stated preference always wins: if they ask for multiple choice only, 
 - Wrong MCQ options should be plausible (common misconceptions), not obviously wrong
 - Short answer questions should have clear evaluation criteria (key concepts to look for)
 - Each question should map to a specific concept from the learning plan
+- One ask per question. "What happens, and why?" is two questions: the user answers the first and loses the grade on the second. Ask the why as a follow-up if the answer leaves it out
 
 ### Step 4: Deliver Interactively
 
