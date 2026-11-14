@@ -323,7 +323,7 @@ Teach the module interactively. The goal is genuine understanding, not informati
    - If "theory-first", lead with principles before examples
    - If the concept is a procedure (writing code, a command, a calculation), show one fully worked example and have the user complete a partial one before asking them to do it alone
 
-3. **Check understanding — after a gap** — Before explaining a concept, ask the user for a quick guess (a wrong guess makes the explanation stick; never grade it). After every 2-3 concepts, ask a comprehension question about an **earlier** concept, not the one just explained — its answer is still on screen. If the user gets it wrong, re-explain differently before moving on.
+3. **Check understanding — after a gap** — Before explaining a concept, ask the user for a quick guess (a wrong guess makes the explanation stick; never grade it). Right after explaining it, ask the user to say the mechanism back in their own words (one ask, ungraded); if the answer is shaky, explain it again from another angle before moving on. After every 2-3 concepts, ask a comprehension question about an **earlier** concept, not the one just explained — its answer is still on screen. If the user gets it wrong, re-explain differently before moving on.
 
 4. **Reference resources** — Point to specific resources from the module: "For a deeper dive on this, check out [Resource Title] — it covers [specific aspect]."
 

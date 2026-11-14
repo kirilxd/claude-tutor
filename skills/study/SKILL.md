@@ -31,9 +31,10 @@ How to split is a judgment call, not a formula. What to weigh:
 Alternate between reviewing and teaching; do not do all of one and then all of the other. A typical stretch:
 
 1. One or two due reviews.
-2. A new concept: an ungraded guess first, then teach it. Teach **one concept at a time**, small enough to hold in mind. A long lesson with five new facts uses up the session and leaves nothing to practise with.
-3. Something else (another review, or the next guess).
-4. The first graded question on the new concept, after that gap. If no gap fits in the time left, do not grade it today: give it a `spacedRepetition` entry due tomorrow.
+2. A new concept: an ungraded guess first, then teach it. Teach **one concept at a time**, small enough to hold in mind: one mechanism per lesson. Its limits, its sibling feature and the list of alternatives are lessons of their own. A long lesson with five new facts uses up the session and leaves nothing to practise with.
+3. Check that it landed, right away and ungraded, with one ask: the user explains the mechanism in their own words, or, for something they will have to write, writes it once with the lesson in view. Shaky answer → teach it again from another angle and check again. Good enough (not perfect) → move on. Reading a lesson and jumping straight to another topic leaves the user feeling they learned nothing. A trivial concept can skip this.
+4. Something else (another review, or the next guess).
+5. The first graded question on the new concept, after that gap. Size it to what the user has practised: do not ask for code from memory that they have never written once. If no gap fits in the time left, do not grade it today: give it a `spacedRepetition` entry due tomorrow.
 
 Keep going by how the answers come:
 
