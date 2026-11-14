@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { validatePlan, validateProgress, updateSM2, computeWeakStrong, getModuleScores, toSlug } = require('./validate');
+const { validatePlan, validateProgress, scheduleReview, computeWeakStrong, getModuleScores, toSlug } = require('./validate');
 const { sendEvent, initSSE, streamClaude, extractJSON } = require('./sse');
 
 const router = express.Router();
@@ -452,10 +452,12 @@ router.post('/quiz/submit', (req, res) => {
   };
   progress.quizzes.push(quiz);
 
-  // Update SM-2 for each concept
+  // Reschedule each concept (auto-marked: right → good, wrong → again)
   if (!progress.spacedRepetition) progress.spacedRepetition = {};
+  const planFile = findPlanFile(req.params.slug);
+  const deadline = planFile ? readJson(planFile).deadline : null;
   for (const a of answers) {
-    progress.spacedRepetition[a.concept] = updateSM2(progress.spacedRepetition[a.concept], a.correct);
+    progress.spacedRepetition[a.concept] = scheduleReview(progress.spacedRepetition[a.concept], a.correct ? 'good' : 'again', new Date(), deadline);
   }
 
   // Compute weak/strong
