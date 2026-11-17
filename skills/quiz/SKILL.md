@@ -108,6 +108,9 @@ The user's stated preference always wins: if they ask for multiple choice only, 
 - Wrong MCQ options should be plausible (common misconceptions), not obviously wrong
 - Short answer questions should have clear evaluation criteria (key concepts to look for)
 - Each question should map to a specific concept from the learning plan
+- **Check the facts before asking.** When the question names things from the user's project or a codebase (fields, files, settings, defaults), look them up first; a wrong name turns a fair question into a puzzle and costs the user a grade. A question that asks the user to read code shows the code (or links it), since the skill tested is reading, not memorising the file
+- Every term in the question has been taught or is explained in it; a question that turns on an untaught word tests the word
+- One stable answer: the question names what it asks for (the outcome, the order, the value), so the user knows what a complete answer is (Matuschak, *How to write good prompts*)
 - One ask per question. "What happens, and why?" is two questions: the user answers the first and loses the grade on the second. Ask the why as a follow-up if the answer leaves it out
 
 ### Step 4: Deliver Interactively
@@ -137,17 +140,30 @@ Grade **every** answer on four levels and show the grade — never leave an answ
 
 Read confidence from how the user answers (hedging, "I guess", a long pause they mention) — don't ask for it separately. A confident wrong answer is a misconception: name the wrong belief explicitly in the feedback, because that is the error feedback fixes best. A hesitant right answer is Hard, not Good.
 
+**A blank or half answer gets one cue first.** If the user is stuck or has only part of it, give one hint that narrows the search without giving the answer (a sub-question, the situation it applies to), and let them try again. Answering for them feels helpful but costs the learning: unguided answer-giving raised practice scores and lowered later exam scores in a large trial, while a tutor that gave hints instead did not (Bastani et al., 2025). Solved after the cue → Hard at most; still stuck → Again and teach it.
+
+**Feedback shape: what was right, one correction, what next.** Keep it to a few lines; the user should finish reading it in seconds.
+- Start with what the answer got right, in one line, before what is missing. When an answer fixes something the user missed before, say so; it is the evidence they are improving.
+- Then the one correction that matters most. Further slips only if they are real (see the weighing above), one line each.
+- An answer that reaches the right result by a different valid reason is Good; add the expected reason in one line.
+- The user dictates or types fast: a word that is clearly a transcription slip ("batch" for "patch") is not a mistake. Correct wording only when an examiner or interviewer would count it against them.
+- No extra boxes, tables or source tours in quiz feedback unless the user asks why; point to the source in one line when they doubt the claim.
+
 If correct (Hard / Good / Easy):
-> [Grade] — [1-2 sentence explanation reinforcing the concept; for Hard, name the missing detail]
+> [Grade] — [what was right]. [for Hard: the missing detail; otherwise one line reinforcing the concept]
 
 If incorrect (Again):
-> Again — the answer is [correct answer]. [2-3 sentence explanation helping the user understand]
+> Again — [what was right, if anything]. The answer is [correct answer]. [1-2 sentences on the idea that was missing]
+
+**When the tutor was wrong, say so and fix the grade.** If the question used a wrong name, rested on a wrong fact or could be read two ways, void or regrade it at once and say so in one line. The user's grade must never carry the tutor's error.
 
 **Retry an Again answer in the same session.** After 2-3 questions on other concepts, ask the missed concept once more in a new scenario, until the user gets it right once. Only the first answer sets the grade and the schedule; the retry is practice. Never retry straight after the explanation — the answer is still on screen.
 
+**Re-teach from a new angle, not with more detail.** If a concept was missed before and the same kind of explanation (a table, the source lines) did not hold, a fuller version of it will not either. Change the medium: an everyday analogy, a drawing of where the data lives or which step runs, or a direct contrast with the thing it keeps getting confused with. Then check the new picture on a new case before grading it again.
+
 **When a concept is stuck, stop quizzing it.** A concept is stuck when the user has missed it in about three sessions or more (count its `"correct": false` entries across `quizzes`). Asking the same thing again tests nothing new and only costs time. Change the approach instead:
 
-1. **Look for a shared cause.** If several stuck concepts fail in the same way, one missing prerequisite is probably behind them. Teach that one thing first; it may clear them all.
+1. **Look for a shared cause.** If several stuck concepts fail in the same way, one missing prerequisite is probably behind them. Teach that one thing first; it may clear them all. The same holds before a concept is stuck: when the same slip shows up across different concepts (for example, values written as bare names instead of read from the object that holds them), it is a missing mental model, not a set of separate errors. Teach that model once as its own lesson, track it as its own concept, and review it across the concepts it touches; naming the pattern again after each answer does not build it.
 2. **A procedure** (writing code, a command, a calculation, a derivation) — split it into parts small enough to get right one at a time, and track each part as its own concept named `[concept]: [part]`. Take each part through three stages, one stage per successful review, one stage back on a miss:
    - **Worked example** — show a full solution; the user explains why each step is there. Save with `"format": "worked-example"`.
    - **Fill the gap** — show the solution with one part missing; the user supplies it. Save with `"format": "completion"`.

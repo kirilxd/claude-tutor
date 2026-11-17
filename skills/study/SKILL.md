@@ -41,6 +41,8 @@ Keep going by how the answers come:
 - Answers come easily → raise the level or move to new material sooner, and say so.
 - A miss → the quiz skill's Again rules: short re-teach, retry later in the session.
 - Several misses with the **same cause** (for example, each one mixed up two names that had to match) → name the pattern to the user. It is worth more than the individual corrections.
+- Two or more misses in a row, or the user sounds tired or frustrated → step down: a smaller question, a cue, or a short re-teach, and say so in one line. If they are worn out, shorten the rest of the session to the one or two items that matter most rather than pushing through the plan.
+- Keep the session about the subject. Fixing the tutor, its files or its bookkeeping is done after the session or between turns, not narrated in the middle of it; the user's minutes are for learning.
 - The user asks for an explanation → give it. It is their session. Then pick the plan back up, and do not grade a question whose answer you have just explained.
 
 ## 3. Close
