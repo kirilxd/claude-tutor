@@ -158,6 +158,13 @@ If incorrect (Again):
 
 Tell the user in one line that you are changing approach and why.
 
+**Weigh each mistake by what it would cost.** The grade reflects understanding, not a count of errors. Ask of every slip: does it show the user misunderstands the concept, and what would it do in real use?
+- **Trivial slip**: a typo, wrong letter case, missing bracket or import, a misremembered name the user would catch at once because it fails loudly in the editor or on the first run. Point it out in one line; it does not lower the grade on its own.
+- **Real slip**: it silently does the wrong thing (a misspelled hook or key that is ignored without an error, a name whose case must match exactly), or it is a detail the exam or the job really checks. This is a missing detail: it can make a correct answer Hard.
+- **Conceptual error**: the answer shows a wrong model of how the thing works, or leaves out the core step the concept is about. This is Again, however tidy the rest is.
+
+The same surface mistake can land in different bins: a capital letter in a variable name is trivial, the same capital letter in a name the framework matches exactly (and silently skips) is real. Say which bin you put the slip in when you name it, so the user sees what matters.
+
 **Grade the concept the question is about.** If the user got that right and slipped on something else (a prerequisite, a neighbouring concept), do not lower this concept's grade for it. Say what the other gap is, and teach or schedule that one on its own.
 
 For short answers, evaluate for key concepts, not exact wording. If partially correct, say what they got right and what's missing. Be encouraging but honest.
