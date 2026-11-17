@@ -15,7 +15,7 @@ The learning system uses three separate directories. Each directory has ONE purp
 
 | Directory | Stores | Allowed fields |
 |---|---|---|
-| `~/.claude/learning/plans/` | Learning plans ONLY | topic, slug, created, level, goal, depth, timeCommitment, modules, totalEstimatedTime, diagnostic |
+| `~/.claude/learning/plans/` | Learning plans ONLY | topic, slug, created, level, goal, depth, timeCommitment, modules, totalEstimatedTime, diagnostic, deadline, assessment |
 | `~/.claude/learning/progress/` | Quiz progress ONLY | topic, quizzes, weakAreas, strongAreas, overallScore, spacedRepetition |
 | `~/.claude/learning/` (root) | index.json + profile.json ONLY | topics (index), learningStyle/background/createdTopics (profile) |
 
@@ -123,6 +123,14 @@ Ask "How much time do you want to invest?" with options:
 - A weekend — Solid foundation with practice
 - A week — In-depth study with projects
 - Ongoing study — Long-term learning commitment
+
+**Deadline** (only when there is one):
+
+If the user's message or goal mentions an exam, interview, certification, or any date, ask "When do you need this by?" and save the date as `deadline` in the plan. It lets `/quiz` and `/review` pace new material against the days left and keep every review before that date. If nothing suggests a date, do not ask — most learning has no deadline, and the field is simply left out.
+
+**How the knowledge will be used** (infer first, ask only if unclear):
+
+People remember best when they practise in the form they will later need. Work out from the goal how the user will use or be tested on this — explaining it aloud in an interview, writing code, a multiple-choice exam, a written exam, using it at work with no test at all — and save it in a few words as `assessment` in the plan (for example `"oral interview"`, `"multiple-choice exam"`, `"writing code"`). If the goal does not make it clear and it would change how you quiz, ask "How will you use or be tested on this?" Otherwise leave the field out; `/quiz` then uses its default mix.
 
 **If no learner profile exists**, also ask "How do you prefer to learn?" with options:
 - Reading docs & articles — Text-based, self-paced learning
@@ -257,9 +265,13 @@ The JSON format:
       ]
     }
   ],
-  "totalEstimatedTime": "15 hours"
+  "totalEstimatedTime": "15 hours",
+  "deadline": "YYYY-MM-DD",
+  "assessment": "oral interview"
 }
 ```
+
+`deadline` and `assessment` are optional — omit either when it does not apply.
 
 3. **Update index** at `~/.claude/learning/index.json`:
    - **Read the existing file first** — do not overwrite other topics
@@ -303,14 +315,32 @@ Teach the module interactively. The goal is genuine understanding, not informati
 
 1. **Connect to prior knowledge** — "In the last module you learned [X]. [Topic] builds on that by..." If this is Module 1 or you don't know the user's background, connect to general knowledge or the user's stated goals.
 
-2. **Explain core concepts** — Cover each key concept from the module's `keyConcepts` list. For each concept:
-   - Give a clear, concise explanation (2-3 paragraphs max)
-   - Use an analogy that connects to something the user likely knows
-   - Provide a concrete example
-   - If the learner profile says "hands-on", emphasize examples and exercises
-   - If "theory-first", lead with principles before examples
+2. **Explain core concepts** — Cover each key concept from the module's `keyConcepts` list, one per message. A lesson should read like a good teacher at a whiteboard, not like a reference page: a learner who finishes a lesson unable to picture the mechanism has been informed, not taught. For each concept:
+   - **Picture first.** Open with one plain sentence of what it does, then an analogy from everyday life or something the user already knows ("a stamp each app adds to the same envelope").
+   - **Show the mechanism as a picture.** When the concept has moving parts (a flow, an order of steps, who calls whom, before/after state), draw it: a small ASCII diagram or arrow flow, or a two-column before/after table, with labels next to the parts they name. Words and picture must say the same thing; skip decoration.
+   - **One small concrete example**, in the user's own project or domain when there is one, cut down to the lines that matter. For a procedure (code, a command, a calculation) this is a fully worked example; have the user complete a partial one before asking them to do it alone.
+   - **At most one gotcha**, the one that causes real bugs. Its limits, sibling features and alternatives are later lessons.
+   - **State the model exactly, and block the likely misreading.** A loose phrase ("higher levels add on top") can plant a wrong model that takes sessions to undo. If there is an obvious wrong reading, add one short counter-example that rules it out.
+   - **The one-sentence test.** Before sending, check the user could say the lesson back in one sentence. If not, it is two lessons.
+   - **Keep the core visible.** The lesson should fit on one screen. Leave out source line numbers, file paths, version notes and side facts unless the user needs them to do the task; put evidence (where it lives in the source, a link) in one closing line the user can skip. Every extra fact competes with the one that matters.
+   - If the concept is bigger than one screen, split it into steps and send them one at a time, with a quick interaction between (a guess, a "what happens next?").
+   - If the learner profile says "hands-on", lead with the example; if "theory-first", lead with the principle.
 
-3. **Check understanding** — After every 2-3 concepts, ask a quick multiple choice comprehension question. This isn't a quiz — it's a "does this make sense?" check. If the user gets it wrong, re-explain differently before moving on.
+   A lesson shape that works:
+
+   ````
+   **[Concept]**: [one plain sentence: what it does].
+   Think of it like [analogy].
+
+   [diagram or before/after table]
+
+   ```
+   [the smallest real example]
+   ```
+   Watch out: [the one gotcha].
+   ````
+
+3. **Check understanding — after a gap** — Before explaining a concept, ask the user for a quick guess (a wrong guess makes the explanation stick; never grade it). Right after explaining it, ask the user to say the mechanism back in their own words (one ask, ungraded); if the answer is shaky, explain it again from another angle before moving on. After every 2-3 concepts, ask a comprehension question about an **earlier** concept, not the one just explained — its answer is still on screen. If the user gets it wrong, re-explain differently before moving on.
 
 4. **Reference resources** — Point to specific resources from the module: "For a deeper dive on this, check out [Resource Title] — it covers [specific aspect]."
 
@@ -322,7 +352,7 @@ Teach the module interactively. The goal is genuine understanding, not informati
 
 **Teaching guidelines:**
 - Keep explanations conversational, not textbook-like
-- Never go more than 3-4 paragraphs without an interaction point
+- Never go more than one screen without an interaction point; short paragraphs, a picture, and an example beat long prose
 - If the user seems to be struggling (wrong answers on comprehension checks), slow down and add more examples
 - If the user is breezing through, pick up the pace and add depth
 - Use the learner profile's learning style to adapt your approach
