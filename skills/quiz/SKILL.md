@@ -108,6 +108,9 @@ The user's stated preference always wins: if they ask for multiple choice only, 
 - Wrong MCQ options should be plausible (common misconceptions), not obviously wrong
 - Short answer questions should have clear evaluation criteria (key concepts to look for)
 - Each question should map to a specific concept from the learning plan
+- **Check the facts before asking.** When the question names things from the user's project or a codebase (fields, files, settings, defaults), look them up first; a wrong name turns a fair question into a puzzle and costs the user a grade. A question that asks the user to read code shows the code (or links it), since the skill tested is reading, not memorising the file
+- Every term in the question has been taught or is explained in it; a question that turns on an untaught word tests the word
+- One stable answer: the question names what it asks for (the outcome, the order, the value), so the user knows what a complete answer is (Matuschak, *How to write good prompts*)
 - One ask per question. "What happens, and why?" is two questions: the user answers the first and loses the grade on the second. Ask the why as a follow-up if the answer leaves it out
 
 ### Step 4: Deliver Interactively
