@@ -39,7 +39,7 @@ The review skill reads data written by the learn and quiz skills. Here are the f
 
 **Progress files** (`~/.claude/learning/progress/<slug>.json`) — contain `quizzes[]` (each with `date`, `module`, `score`, `total`, `questions[]`), `weakAreas[]`, `strongAreas[]`, `overallScore` (percentage 0-100, not fraction).
 
-Progress files now also contain `spacedRepetition` — a map of concept labels to SM-2 scheduling data (`easeFactor`, `intervalDays`, `nextReview`, `repetitions`). Concepts with `nextReview` at or before today are due for review.
+Progress files now also contain `spacedRepetition` — a map of concept labels to review-scheduling data (`easeFactor`, `intervalDays`, `nextReview`, `repetitions`). Concepts with `nextReview` at or before today are due for review.
 
 ## Process
 
@@ -71,6 +71,7 @@ Read `~/.claude/learning/index.json`.
   Module 2: [Title]    [progress bar] not started
   ...
   Weak areas: [list]
+  [If the plan has a deadline:] Deadline: [date] ([D] days left) — [started]/[total] concepts started
   Next step: [actionable suggestion]
 
 [Topic Name 2] ...
@@ -110,6 +111,7 @@ If any concepts have `nextReview` at or before today across any topic, show the 
 
 Always end with one clear, actionable suggestion:
 
+- If the plan has a `deadline` and the concepts not yet started cannot be covered at the current pace: "[N] concepts not started and [D] days left — spend the next session on new material. Run `/quiz [topic]`." This comes before due reviews: a late review costs less than a concept never seen.
 - If concepts are due for review (nextReview <= today): "You have [N] concepts due for review in [topic]. Run `/quiz [topic]` to keep them fresh — spaced repetition works best when you review on schedule."
 - If a topic has weak areas: "Retake the quiz on [topic] focusing on [weak area]. Use `/quiz [topic]`"
 - If a module is unstarted: "Start Module [N]: [title]. Check `/resources [topic]` for study materials"
