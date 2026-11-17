@@ -297,6 +297,14 @@ test('still allows correct ~/.claude/learning/plans/ path', () => {
   assert(r.exitCode === 0, `Expected exit 0, got ${r.exitCode}`);
 });
 
+test('allows optional deadline field in a plan', () => {
+  const r = runHook({
+    file_path: `${HOME}/.claude/learning/plans/dns-2026-03-29.json`,
+    content: '{"topic": "DNS", "slug": "dns", "modules": [], "deadline": "2026-06-01"}',
+  });
+  assert(r.exitCode === 0, `Expected exit 0, got ${r.exitCode}`);
+});
+
 // --- Summary ---
 
 console.log(`\n${pass + fail} tests: ${pass} passed, ${fail} failed`);
