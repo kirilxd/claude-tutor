@@ -145,9 +145,11 @@ If incorrect (Again):
 
 **Retry an Again answer in the same session.** After 2-3 questions on other concepts, ask the missed concept once more in a new scenario, until the user gets it right once. Only the first answer sets the grade and the schedule; the retry is practice. Never retry straight after the explanation — the answer is still on screen.
 
+**Re-teach from a new angle, not with more detail.** If a concept was missed before and the same kind of explanation (a table, the source lines) did not hold, a fuller version of it will not either. Change the medium: an everyday analogy, a drawing of where the data lives or which step runs, or a direct contrast with the thing it keeps getting confused with. Then check the new picture on a new case before grading it again.
+
 **When a concept is stuck, stop quizzing it.** A concept is stuck when the user has missed it in about three sessions or more (count its `"correct": false` entries across `quizzes`). Asking the same thing again tests nothing new and only costs time. Change the approach instead:
 
-1. **Look for a shared cause.** If several stuck concepts fail in the same way, one missing prerequisite is probably behind them. Teach that one thing first; it may clear them all.
+1. **Look for a shared cause.** If several stuck concepts fail in the same way, one missing prerequisite is probably behind them. Teach that one thing first; it may clear them all. The same holds before a concept is stuck: when the same slip shows up across different concepts (for example, values written as bare names instead of read from the object that holds them), it is a missing mental model, not a set of separate errors. Teach that model once as its own lesson, track it as its own concept, and review it across the concepts it touches; naming the pattern again after each answer does not build it.
 2. **A procedure** (writing code, a command, a calculation, a derivation) — split it into parts small enough to get right one at a time, and track each part as its own concept named `[concept]: [part]`. Take each part through three stages, one stage per successful review, one stage back on a miss:
    - **Worked example** — show a full solution; the user explains why each step is there. Save with `"format": "worked-example"`.
    - **Fill the gap** — show the solution with one part missing; the user supplies it. Save with `"format": "completion"`.
