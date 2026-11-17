@@ -365,11 +365,11 @@ const SCENARIOS = [
   },
   {
     id: 'I10',
-    name: 'Quiz submit — saves progress with SM-2 and weak/strong',
+    name: 'Quiz submit — saves progress with review schedule and weak/strong',
     steps: [
       'POST /api/quiz/submit with {slug: "dns", answers: [{concept: "test-concept", correct: true}]}',
       'Verify: response contains progress with quizzes array',
-      'Verify: response contains spacedRepetition with updated SM-2 data',
+      'Verify: response contains spacedRepetition with an updated review schedule',
       'Verify: response contains weakAreas and strongAreas',
       'Verify: GET /api/topics/dns shows updated quizzesTaken and overallScore',
       'Clean up: remove quiz entry from progress',

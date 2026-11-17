@@ -1,6 +1,6 @@
 // Schema validation for learning data — mirrors enforce-paths.js logic
 
-const PLAN_FIELDS = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'timeCommitment', 'modules', 'totalEstimatedTime', 'diagnostic'];
+const PLAN_FIELDS = ['topic', 'slug', 'created', 'level', 'goal', 'depth', 'timeCommitment', 'modules', 'totalEstimatedTime', 'diagnostic', 'deadline', 'assessment'];
 const PROGRESS_FIELDS = ['topic', 'quizzes', 'weakAreas', 'strongAreas', 'overallScore', 'spacedRepetition'];
 const QUIZ_FIELDS = ['quizzes', 'weakAreas', 'strongAreas', 'spacedRepetition', 'overallScore'];
 const PLAN_ONLY_FIELDS = ['modules', 'resources', 'timeCommitment', 'totalEstimatedTime'];
@@ -46,24 +46,40 @@ function validateProgress(data) {
   return { valid: errors.length === 0, errors };
 }
 
-// --- SM-2 Spaced Repetition ---
+// --- Spaced Repetition: graded scheduling ---
+// Default intervals per grade. The quiz skill may adjust them by judgment;
+// the dashboard (auto-marked MCQ) only knows right/wrong → 'good' / 'again'.
 
-function updateSM2(existing, correct) {
-  const quality = correct ? 5 : 0;
+const GRADES = ['again', 'hard', 'good', 'easy'];
+
+function scheduleReview(existing, grade, today = new Date(), deadline = null) {
+  if (!GRADES.includes(grade)) throw new Error(`Unknown grade: ${grade}. Use one of ${GRADES.join(', ')}`);
+  const prev = existing?.intervalDays || 1;
   let ef = existing?.easeFactor || 2.5;
-  let interval = existing?.intervalDays || 1;
   let reps = existing?.repetitions || 0;
+  let interval;
 
-  if (quality >= 3) {
-    reps += 1;
-    interval = reps === 1 ? 1 : reps === 2 ? 6 : Math.round(interval * ef);
-  } else {
+  if (grade === 'again') {
+    // A lapse shortens the interval instead of wiping the history.
+    interval = Math.max(1, Math.round(prev * 0.25));
     reps = 0;
-    interval = 1;
+    ef -= 0.2;
+  } else {
+    reps += 1;
+    if (grade === 'hard') { interval = Math.max(3, Math.round(prev * 1.2)); ef -= 0.15; }
+    if (grade === 'good') { interval = Math.max(7, Math.round(prev * ef)); }
+    if (grade === 'easy') { interval = Math.max(14, Math.round(prev * ef * 1.3)); ef += 0.15; }
   }
-  ef = Math.max(1.3, ef + 0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+  ef = Math.max(1.3, ef);
 
-  const next = new Date();
+  if (deadline) {
+    // No review may land after the deadline: keep one more before it.
+    // ponytail: caps to the day before; the quiz skill spreads these by judgment.
+    const daysLeft = Math.round((new Date(deadline) - new Date(new Date(today).toLocaleDateString('sv-SE'))) / 86400000);
+    if (daysLeft > 1) interval = Math.min(interval, daysLeft - 1);
+  }
+
+  const next = new Date(today);
   next.setDate(next.getDate() + interval);
 
   return {
@@ -121,5 +137,5 @@ function toSlug(topic) {
 
 module.exports = {
   validatePlan, validateProgress, PLAN_FIELDS, PROGRESS_FIELDS,
-  updateSM2, computeWeakStrong, getModuleScores, toSlug,
+  GRADES, scheduleReview, computeWeakStrong, getModuleScores, toSlug,
 };
