@@ -137,6 +137,8 @@ Grade **every** answer on four levels and show the grade — never leave an answ
 
 Read confidence from how the user answers (hedging, "I guess", a long pause they mention) — don't ask for it separately. A confident wrong answer is a misconception: name the wrong belief explicitly in the feedback, because that is the error feedback fixes best. A hesitant right answer is Hard, not Good.
 
+**A blank or half answer gets one cue first.** If the user is stuck or has only part of it, give one hint that narrows the search without giving the answer (a sub-question, the situation it applies to), and let them try again. Answering for them feels helpful but costs the learning: unguided answer-giving raised practice scores and lowered later exam scores in a large trial, while a tutor that gave hints instead did not (Bastani et al., 2025). Solved after the cue → Hard at most; still stuck → Again and teach it.
+
 If correct (Hard / Good / Easy):
 > [Grade] — [1-2 sentence explanation reinforcing the concept; for Hard, name the missing detail]
 
